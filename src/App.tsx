@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import Portfolio from "./pages/Portfolio";
+import Assets from "./pages/Assets";
 import FlowDesigner from "./pages/FlowDesigner";
 import ApiConnections from "./pages/ApiConnections";
 import Auth from "./pages/Auth";
@@ -26,6 +27,7 @@ const App = () => (
               <Route path="/" element={<Landing />} />
               <Route path="/dashboard" element={<Index />} />
               <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/asset-types" element={<Assets />} />
               <Route path="/flow-designer" element={<FlowDesigner />} />
               <Route path="/api-connections" element={<ApiConnections />} />
               <Route path="/auth" element={<Auth />} />
