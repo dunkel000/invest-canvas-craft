@@ -14,7 +14,188 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      api_connections: {
+        Row: {
+          api_key_encrypted: string | null
+          created_at: string
+          endpoint_url: string | null
+          id: string
+          is_active: boolean | null
+          last_sync: string | null
+          name: string
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          api_key_encrypted?: string | null
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          name: string
+          provider: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          api_key_encrypted?: string | null
+          created_at?: string
+          endpoint_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync?: string | null
+          name?: string
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      assets: {
+        Row: {
+          asset_type: Database["public"]["Enums"]["asset_type"]
+          created_at: string
+          current_price: number | null
+          id: string
+          name: string
+          portfolio_id: string
+          purchase_price: number | null
+          quantity: number
+          symbol: string | null
+          total_value: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          asset_type: Database["public"]["Enums"]["asset_type"]
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          name: string
+          portfolio_id: string
+          purchase_price?: number | null
+          quantity?: number
+          symbol?: string | null
+          total_value?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          asset_type?: Database["public"]["Enums"]["asset_type"]
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          name?: string
+          portfolio_id?: string
+          purchase_price?: number | null
+          quantity?: number
+          symbol?: string | null
+          total_value?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flows: {
+        Row: {
+          created_at: string
+          description: string | null
+          flow_data: Json
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          flow_data?: Json
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          flow_data?: Json
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      portfolios: {
+        Row: {
+          created_at: string
+          currency: string | null
+          description: string | null
+          id: string
+          name: string
+          total_value: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          total_value?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          total_value?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +204,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      asset_type:
+        | "stock"
+        | "crypto"
+        | "bond"
+        | "etf"
+        | "real_estate"
+        | "commodity"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +338,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      asset_type: [
+        "stock",
+        "crypto",
+        "bond",
+        "etf",
+        "real_estate",
+        "commodity",
+        "other",
+      ],
+    },
   },
 } as const
