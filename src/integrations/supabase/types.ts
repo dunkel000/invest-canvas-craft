@@ -55,42 +55,51 @@ export type Database = {
       }
       assets: {
         Row: {
+          api_connection_id: string | null
           asset_type: Database["public"]["Enums"]["asset_type"]
           created_at: string
           current_price: number | null
           id: string
+          metadata: Json | null
           name: string
           portfolio_id: string
           purchase_price: number | null
           quantity: number
+          risk_category: Database["public"]["Enums"]["risk_category"] | null
           symbol: string | null
           total_value: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          api_connection_id?: string | null
           asset_type: Database["public"]["Enums"]["asset_type"]
           created_at?: string
           current_price?: number | null
           id?: string
+          metadata?: Json | null
           name: string
           portfolio_id: string
           purchase_price?: number | null
           quantity?: number
+          risk_category?: Database["public"]["Enums"]["risk_category"] | null
           symbol?: string | null
           total_value?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          api_connection_id?: string | null
           asset_type?: Database["public"]["Enums"]["asset_type"]
           created_at?: string
           current_price?: number | null
           id?: string
+          metadata?: Json | null
           name?: string
           portfolio_id?: string
           purchase_price?: number | null
           quantity?: number
+          risk_category?: Database["public"]["Enums"]["risk_category"] | null
           symbol?: string | null
           total_value?: number | null
           updated_at?: string
@@ -98,10 +107,80 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "assets_api_connection_id_fkey"
+            columns: ["api_connection_id"]
+            isOneToOne: false
+            referencedRelation: "api_connections"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "assets_portfolio_id_fkey"
             columns: ["portfolio_id"]
             isOneToOne: false
             referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cashflows: {
+        Row: {
+          amount: number
+          asset_id: string | null
+          cashflow_type: Database["public"]["Enums"]["cashflow_type"]
+          created_at: string
+          description: string | null
+          end_date: string | null
+          flow_id: string | null
+          frequency: string | null
+          id: string
+          metadata: Json | null
+          start_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          asset_id?: string | null
+          cashflow_type: Database["public"]["Enums"]["cashflow_type"]
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          flow_id?: string | null
+          frequency?: string | null
+          id?: string
+          metadata?: Json | null
+          start_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          asset_id?: string | null
+          cashflow_type?: Database["public"]["Enums"]["cashflow_type"]
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          flow_id?: string | null
+          frequency?: string | null
+          id?: string
+          metadata?: Json | null
+          start_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cashflows_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cashflows_flow_id_fkey"
+            columns: ["flow_id"]
+            isOneToOne: false
+            referencedRelation: "flows"
             referencedColumns: ["id"]
           },
         ]
@@ -135,6 +214,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      math_functions: {
+        Row: {
+          created_at: string
+          description: string | null
+          flow_id: string | null
+          formula: string | null
+          function_type: Database["public"]["Enums"]["math_function_type"]
+          id: string
+          input_assets: string[] | null
+          parameters: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          flow_id?: string | null
+          formula?: string | null
+          function_type: Database["public"]["Enums"]["math_function_type"]
+          id?: string
+          input_assets?: string[] | null
+          parameters?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          flow_id?: string | null
+          formula?: string | null
+          function_type?: Database["public"]["Enums"]["math_function_type"]
+          id?: string
+          input_assets?: string[] | null
+          parameters?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "math_functions_flow_id_fkey"
+            columns: ["flow_id"]
+            isOneToOne: false
+            referencedRelation: "flows"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       portfolios: {
         Row: {
@@ -212,6 +338,23 @@ export type Database = {
         | "real_estate"
         | "commodity"
         | "other"
+      cashflow_type:
+        | "income"
+        | "expense"
+        | "dividend"
+        | "interest"
+        | "capital_gain"
+        | "capital_loss"
+      math_function_type:
+        | "add"
+        | "subtract"
+        | "multiply"
+        | "divide"
+        | "percentage"
+        | "compound"
+        | "present_value"
+        | "future_value"
+      risk_category: "low" | "medium" | "high" | "very_high"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -348,6 +491,25 @@ export const Constants = {
         "commodity",
         "other",
       ],
+      cashflow_type: [
+        "income",
+        "expense",
+        "dividend",
+        "interest",
+        "capital_gain",
+        "capital_loss",
+      ],
+      math_function_type: [
+        "add",
+        "subtract",
+        "multiply",
+        "divide",
+        "percentage",
+        "compound",
+        "present_value",
+        "future_value",
+      ],
+      risk_category: ["low", "medium", "high", "very_high"],
     },
   },
 } as const
