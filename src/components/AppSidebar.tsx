@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
+import { ProfileAvatar } from "@/components/ProfileAvatar"
 
 import {
   Sidebar,
@@ -50,14 +51,15 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <div className="p-4 border-b border-sidebar-border">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <Wallet className="w-5 h-5 text-white" />
             </div>
-            <div>
+            <div className="flex-1">
               <h2 className="text-sm font-semibold text-sidebar-foreground">PortfolioFlow</h2>
               <p className="text-xs text-sidebar-foreground/60">Investment Admin</p>
             </div>
+            <ProfileAvatar />
           </div>
         </div>
 
