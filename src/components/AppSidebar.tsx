@@ -7,11 +7,20 @@ import {
   Database,
   GitBranch,
   Wallet,
-  LogOut
+  LogOut,
+  ChevronDown,
+  Target,
+  Calculator,
+  Receipt,
+  User,
+  Link,
+  Briefcase,
+  Users
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { ProfileAvatar } from "@/components/ProfileAvatar"
+import { useState } from "react"
 
 import {
   Sidebar,
@@ -23,10 +32,27 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
-const items = [
+const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
-  { title: "Portfolio", url: "/portfolio", icon: PieChart },
+]
+
+const wealthManagementItems = [
+  { title: "All Portfolios", url: "/wealth/all-portfolios", icon: PieChart },
+  { title: "Tax Planning", url: "/wealth/tax-planning", icon: Receipt },
+  { title: "Liquidity Planning", url: "/wealth/liquidity-planning", icon: Calculator },
+  { title: "Financial Goals", url: "/wealth/financial-goals", icon: Target },
+]
+
+const portfolioItems = [
+  { title: "Personal Portfolio", url: "/portfolios/personal", icon: User },
+  { title: "API Synced Portfolios", url: "/portfolios/api-synced", icon: Link },
+  { title: "Manual Portfolios", url: "/portfolios/manual", icon: Briefcase },
+  { title: "Client Portfolios", url: "/portfolios/clients", icon: Users },
+]
+
+const otherItems = [
   { title: "Asset Types", url: "/asset-types", icon: Layers },
   { title: "Flow Designer", url: "/flow-designer", icon: GitBranch },
   { title: "API Connections", url: "/api-connections", icon: Database },
@@ -38,14 +64,29 @@ export function AppSidebar() {
   const location = useLocation()
   const currentPath = location.pathname
   const { signOut } = useAuth()
+  const [wealthOpen, setWealthOpen] = useState(true)
+  const [portfoliosOpen, setPortfoliosOpen] = useState(true)
 
-  const isActive = (path: string) => currentPath === path
+  const isActive = (path: string) => currentPath === path || currentPath.startsWith(path)
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive ? "bg-sidebar-accent text-sidebar-primary font-medium" : "hover:bg-sidebar-accent/50"
 
   const handleSignOut = () => {
     signOut()
   }
+
+  const renderMenuItems = (items: typeof mainItems) => (
+    items.map((item) => (
+      <SidebarMenuItem key={item.title}>
+        <SidebarMenuButton asChild>
+          <NavLink to={item.url} end className={getNavCls}>
+            <item.icon className="mr-2 h-4 w-4" />
+            <span>{item.title}</span>
+          </NavLink>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    ))
+  )
 
   return (
     <Sidebar>
@@ -57,27 +98,64 @@ export function AppSidebar() {
             </div>
             <div className="flex-1">
               <h2 className="text-sm font-semibold text-sidebar-foreground">PortfolioFlow</h2>
-              <p className="text-xs text-sidebar-foreground/60">Investment Admin</p>
+              <p className="text-xs text-sidebar-foreground/60">Wealth Management</p>
             </div>
             <ProfileAvatar />
           </div>
         </div>
 
+        {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className="mr-2 h-4 w-4" />
-                      <span>{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {renderMenuItems(mainItems)}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Wealth Management Section */}
+        <SidebarGroup>
+          <Collapsible open={wealthOpen} onOpenChange={setWealthOpen}>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md">
+                <span>Wealth Management</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${wealthOpen ? 'rotate-180' : ''}`} />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {renderMenuItems(wealthManagementItems)}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        {/* Portfolios Section */}
+        <SidebarGroup>
+          <Collapsible open={portfoliosOpen} onOpenChange={setPortfoliosOpen}>
+            <SidebarGroupLabel asChild>
+              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md">
+                <span>Portfolios</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${portfoliosOpen ? 'rotate-180' : ''}`} />
+              </CollapsibleTrigger>
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {renderMenuItems(portfolioItems)}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </SidebarGroup>
+
+        {/* Other Items */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {renderMenuItems(otherItems)}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
