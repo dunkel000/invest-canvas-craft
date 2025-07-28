@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { TrendingUp, TrendingDown, MoreHorizontal } from "lucide-react"
+import ProtectedRoute from "@/components/ProtectedRoute"
 
 const holdings = [
   { symbol: "AAPL", name: "Apple Inc.", shares: 150, price: 175.23, change: 2.45, changePercent: 1.42, value: 26284.50 },
@@ -15,7 +16,8 @@ const holdings = [
 
 const Portfolio = () => {
   return (
-    <DashboardLayout>
+    <ProtectedRoute>
+      <DashboardLayout>
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Portfolio Holdings</h2>
@@ -74,6 +76,7 @@ const Portfolio = () => {
         </Card>
       </div>
     </DashboardLayout>
+    </ProtectedRoute>
   );
 };
 
