@@ -18,7 +18,8 @@ import {
   Users,
   Search,
   Crown,
-  Shield
+  Shield,
+  Activity
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
@@ -67,6 +68,8 @@ const otherItems = [
 const adminItems = [
   { title: "Admin Dashboard", url: "/admin", icon: Crown },
   { title: "User Management", url: "/admin/users", icon: Users },
+  { title: "System Settings", url: "/admin/settings", icon: Settings },
+  { title: "Audit Logs", url: "/admin/audit-logs", icon: Activity },
   { title: "System Analytics", url: "/admin/analytics", icon: BarChart3 },
 ]
 

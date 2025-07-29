@@ -198,6 +198,33 @@ export type Database = {
           },
         ]
       }
+      audit_logs: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_user_id?: string | null
+        }
+        Relationships: []
+      }
       cashflows: {
         Row: {
           amount: number
@@ -468,9 +495,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_role_to_user: {
+        Args: {
+          _user_email: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      get_user_statistics: {
+        Args: { _user_id: string }
+        Returns: Json
       }
       has_role: {
         Args: {
@@ -479,8 +517,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      log_admin_action: {
+        Args: { _action: string; _target_user_id?: string; _details?: Json }
+        Returns: string
+      }
       promote_to_admin: {
         Args: { _user_email: string }
+        Returns: boolean
+      }
+      remove_role_from_user: {
+        Args: {
+          _user_email: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
         Returns: boolean
       }
     }

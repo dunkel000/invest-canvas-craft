@@ -9,7 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Shield, Crown, User } from "lucide-react";
+import { Shield, Crown, User, Search, Filter } from "lucide-react";
+import { UserManagementDialog } from "@/components/admin/UserManagementDialog";
 
 interface UserData {
   id: string;
@@ -20,8 +21,13 @@ interface UserData {
 
 const UserManagement = () => {
   const [users, setUsers] = useState<UserData[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [promotionEmail, setPromotionEmail] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const fetchUsers = async () => {
@@ -53,6 +59,7 @@ const UserManagement = () => {
       }) || [];
 
       setUsers(usersData);
+      setFilteredUsers(usersData);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -63,6 +70,35 @@ const UserManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Filter users based on search term and role filter
+  useEffect(() => {
+    let filtered = users;
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(user => 
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.id.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply role filter
+    if (roleFilter !== "all") {
+      filtered = filtered.filter(user => user.roles.includes(roleFilter));
+    }
+
+    setFilteredUsers(filtered);
+  }, [users, searchTerm, roleFilter]);
+
+  const handleManageUser = (user: UserData) => {
+    setSelectedUser(user);
+    setIsDialogOpen(true);
+  };
+
+  const handleUserUpdated = () => {
+    fetchUsers(); // Refresh the users list
   };
 
   const promoteToAdmin = async () => {
@@ -137,9 +173,34 @@ const UserManagement = () => {
     <AdminRoute>
       <DashboardLayout>
         <div className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">User Management</h2>
-            <p className="text-muted-foreground">Manage user accounts and permissions</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">User Management</h2>
+              <p className="text-muted-foreground">Manage user accounts and permissions</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Search users..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-64"
+                />
+              </div>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-40">
+                  <Filter className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="user">User</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           
           <Card>
@@ -164,14 +225,19 @@ const UserManagement = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>All Users</CardTitle>
+              <CardTitle className="flex items-center justify-between">
+                All Users 
+                <span className="text-sm font-normal text-muted-foreground">
+                  {loading ? "Loading..." : `${filteredUsers.length} of ${users.length} users`}
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               {loading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
-              ) : users.length > 0 ? (
+              ) : filteredUsers.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -182,7 +248,7 @@ const UserManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {users.map((user) => (
+                    {filteredUsers.map((user) => (
                       <TableRow key={user.id}>
                         <TableCell className="font-mono text-xs">
                           {user.id.slice(0, 8)}...
@@ -206,7 +272,7 @@ const UserManagement = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setPromotionEmail(user.email)}
+                            onClick={() => handleManageUser(user)}
                           >
                             Manage
                           </Button>
@@ -218,12 +284,35 @@ const UserManagement = () => {
               ) : (
                 <div className="text-center p-8">
                   <p className="text-muted-foreground">
-                    No users found. Users will appear here after they create profiles.
+                    {users.length === 0 
+                      ? "No users found. Users will appear here after they create profiles."
+                      : "No users match your current filters."
+                    }
                   </p>
+                  {users.length > 0 && filteredUsers.length === 0 && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mt-2"
+                      onClick={() => {
+                        setSearchTerm("");
+                        setRoleFilter("all");
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  )}
                 </div>
               )}
             </CardContent>
           </Card>
+
+          <UserManagementDialog
+            user={selectedUser}
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+            onUserUpdated={handleUserUpdated}
+          />
         </div>
       </DashboardLayout>
     </AdminRoute>
