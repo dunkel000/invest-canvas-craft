@@ -4,6 +4,7 @@ import {
   MiniMap,
   Controls,
   Background,
+  BackgroundVariant,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -373,6 +374,50 @@ export function AssetComposer() {
             </p>
           </div>
           <div className="flex gap-2">
+            {/* Assets List for quick access */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  Asset List
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Select Asset to Compose</DialogTitle>
+                </DialogHeader>
+                <div className="max-h-96 overflow-y-auto space-y-2">
+                  {assets.map((asset) => (
+                    <div
+                      key={asset.id}
+                      className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 cursor-pointer"
+                      onClick={() => loadAssetIntoFlow(asset.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
+                          <span className="text-xs font-semibold text-primary">
+                            {asset.symbol ? asset.symbol.slice(0, 2) : asset.name.slice(0, 2)}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="font-medium text-sm">{asset.name}</div>
+                          <div className="text-xs text-muted-foreground">{asset.asset_type}</div>
+                        </div>
+                      </div>
+                      <div className="text-right text-sm">
+                        <div className="font-medium">${asset.total_value?.toLocaleString() || '0'}</div>
+                        <div className="text-xs text-muted-foreground">{asset.quantity} shares</div>
+                      </div>
+                    </div>
+                  ))}
+                  {assets.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No assets found. Create an asset first.
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+            
             <Dialog open={addNodeDialogOpen} onOpenChange={setAddNodeDialogOpen}>
               <DialogTrigger asChild>
                 <Button size="sm" className="bg-primary text-primary-foreground">
@@ -514,7 +559,9 @@ export function AssetComposer() {
           />
           <Background 
             color="hsl(var(--border))" 
-            gap={16} 
+            gap={20}
+            size={2}
+            variant={BackgroundVariant.Dots}
           />
         </ReactFlow>
       </CardContent>

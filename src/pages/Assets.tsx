@@ -231,6 +231,72 @@ const Assets = () => {
     }
   }
 
+  const createAssetWithComposer = async () => {
+    try {
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('Not authenticated')
+
+      // First, get or create a default portfolio
+      let { data: portfolios } = await supabase
+        .from('portfolios')
+        .select('id')
+        .eq('user_id', userData.user.id)
+        .limit(1)
+
+      let portfolioId = portfolios?.[0]?.id
+
+      if (!portfolioId) {
+        // Create a default portfolio if none exists
+        const { data: newPortfolio, error: portfolioError } = await supabase
+          .from('portfolios')
+          .insert([{
+            name: 'Default Portfolio',
+            description: 'Automatically created portfolio',
+            user_id: userData.user.id
+          }])
+          .select('id')
+          .single()
+
+        if (portfolioError) throw portfolioError
+        portfolioId = newPortfolio.id
+      }
+
+      const assetData = {
+        ...newAsset,
+        user_id: userData.user.id,
+        portfolio_id: portfolioId,
+        total_value: newAsset.quantity * newAsset.current_price
+      }
+
+      const { data: createdAsset, error } = await supabase
+        .from('assets')
+        .insert([assetData])
+        .select()
+        .single()
+
+      if (error) throw error
+
+      toast.success('Asset created successfully')
+      setCreateDialogOpen(false)
+      setNewAsset({
+        name: "",
+        symbol: "",
+        asset_type: "stock",
+        quantity: 0,
+        purchase_price: 0,
+        current_price: 0,
+        risk_category: "medium",
+        metadata: {}
+      })
+      
+      // Navigate to Asset Composer with the new asset
+      navigate(`/flow-designer?asset=${createdAsset.id}`)
+    } catch (error) {
+      toast.error('Failed to create asset')
+      console.error(error)
+    }
+  }
+
   const editInFlow = (assetId: string) => {
     navigate(`/flow-designer?asset=${assetId}`)
   }
@@ -399,9 +465,14 @@ const Assets = () => {
                       </div>
                     </div>
 
-                    <Button onClick={createAsset} className="w-full">
-                      Create Asset
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button onClick={createAsset} variant="outline" className="flex-1">
+                        Create Asset
+                      </Button>
+                      <Button onClick={() => createAssetWithComposer()} className="flex-1">
+                        Create & Compose
+                      </Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
