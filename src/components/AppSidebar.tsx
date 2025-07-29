@@ -58,6 +58,7 @@ const portfolioItems = [
 const otherItems = [
   { title: "Discover", url: "/discover", icon: Search },
   { title: "Asset Types", url: "/asset-types", icon: Layers },
+  { title: "Asset Universe", url: "/assets", icon: Database },
   { title: "Asset Composer", url: "/asset-composer", icon: GitBranch },
   { title: "API Connections", url: "/api-connections", icon: Database },
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
@@ -66,7 +67,6 @@ const otherItems = [
 const adminItems = [
   { title: "Admin Dashboard", url: "/admin", icon: Crown },
   { title: "User Management", url: "/admin/users", icon: Users },
-  { title: "Asset Management", url: "/admin/assets", icon: Database },
   { title: "System Analytics", url: "/admin/analytics", icon: BarChart3 },
 ]
 

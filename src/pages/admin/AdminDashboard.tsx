@@ -35,23 +35,6 @@ const AdminDashboard = () => {
             
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Asset Universe</CardTitle>
-                <Database className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground mb-3">
-                  Manage global asset database
-                </p>
-                <Link to="/admin/assets">
-                  <Button variant="outline" size="sm" className="w-full">
-                    Manage Assets
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">System Analytics</CardTitle>
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
@@ -90,17 +73,11 @@ const AdminDashboard = () => {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button variant="outline" asChild>
                   <Link to="/admin/users">
                     <Users className="mr-2 h-4 w-4" />
                     Promote User to Admin
-                  </Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link to="/admin/assets">
-                    <Database className="mr-2 h-4 w-4" />
-                    Bulk Import Assets
                   </Link>
                 </Button>
                 <Button variant="outline" asChild>

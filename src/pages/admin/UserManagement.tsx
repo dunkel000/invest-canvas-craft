@@ -26,10 +26,10 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      // Fetch users from profiles table with their roles
+      // Fetch all profiles (admin can see all profiles due to RLS policy)
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select('user_id, display_name')
+        .select('user_id, display_name, created_at')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
@@ -47,7 +47,7 @@ const UserManagement = () => {
         return {
           id: profile.user_id,
           email: profile.display_name || 'No display name',
-          created_at: new Date().toISOString(), // We can't get auth creation date from profiles
+          created_at: profile.created_at || new Date().toISOString(),
           roles: roles.length > 0 ? roles : ['user']
         };
       }) || [];
