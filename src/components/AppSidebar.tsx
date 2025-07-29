@@ -56,7 +56,7 @@ const portfolioItems = [
 const otherItems = [
   { title: "Discover", url: "/discover", icon: Search },
   { title: "Asset Types", url: "/asset-types", icon: Layers },
-  { title: "Asset Composer", url: "/flow-designer", icon: GitBranch },
+  { title: "Asset Composer", url: "/asset-composer", icon: GitBranch },
   { title: "API Connections", url: "/api-connections", icon: Database },
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
 ]

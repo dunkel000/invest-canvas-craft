@@ -58,7 +58,7 @@ const App = () => (
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/asset-types" element={<Assets />} />
               <Route path="/assets" element={<Assets />} />
-              <Route path="/flow-designer" element={<FlowDesigner />} />
+              <Route path="/asset-composer" element={<FlowDesigner />} />
               <Route path="/api-connections" element={<ApiConnections />} />
               <Route path="/analytics" element={<div>Analytics coming soon</div>} />
               <Route path="/settings" element={<Settings />} />

@@ -290,7 +290,7 @@ const Assets = () => {
       })
       
       // Navigate to Asset Composer with the new asset
-      navigate(`/flow-designer?asset=${createdAsset.id}`)
+      navigate(`/asset-composer?asset=${createdAsset.id}`)
     } catch (error) {
       toast.error('Failed to create asset')
       console.error(error)
@@ -298,7 +298,7 @@ const Assets = () => {
   }
 
   const editInFlow = (assetId: string) => {
-    navigate(`/flow-designer?asset=${assetId}`)
+    navigate(`/asset-composer?asset=${assetId}`)
   }
 
   const getRiskColor = (risk: string) => {
