@@ -3,7 +3,11 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Lightbulb, Building2, Globe2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, TrendingDown, Lightbulb, Building2, Globe2, BarChart3 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const stocksByProvider = {
   "NASDAQ": [
@@ -53,6 +57,38 @@ const investmentIdeas = [
 ];
 
 const Discover = () => {
+  const [spStocks, setSpStocks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const fetchSPData = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('fetch-sp500');
+      
+      if (error) throw error;
+      
+      setSpStocks(data.data || []);
+      toast({
+        title: "S&P 500 data updated",
+        description: "Latest stock prices fetched successfully",
+      });
+    } catch (error) {
+      console.error('Error fetching S&P data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch S&P 500 data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSPData();
+  }, []);
+
   return (
     <ProtectedRoute>
       <DashboardLayout>
@@ -62,8 +98,12 @@ const Discover = () => {
             <p className="text-muted-foreground">Explore investment opportunities and market insights</p>
           </div>
 
-          <Tabs defaultValue="stocks" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs defaultValue="sp500" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="sp500" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                S&P 500
+              </TabsTrigger>
               <TabsTrigger value="stocks" className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
                 Stocks by Exchange
@@ -73,6 +113,57 @@ const Discover = () => {
                 Investment Ideas
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="sp500" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <BarChart3 className="h-5 w-5" />
+                        S&P 500 Top Stocks
+                      </CardTitle>
+                      <CardDescription>
+                        Real-time data for top S&P 500 companies
+                      </CardDescription>
+                    </div>
+                    <Button 
+                      onClick={fetchSPData} 
+                      disabled={loading}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {loading ? "Updating..." : "Refresh"}
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                    {spStocks.map((stock) => (
+                      <div key={stock.symbol} className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h4 className="font-semibold text-sm">{stock.symbol}</h4>
+                            <p className="text-xs text-muted-foreground truncate">{stock.name}</p>
+                          </div>
+                          {stock.positive ? (
+                            <TrendingUp className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <TrendingDown className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-lg font-bold">{stock.price}</p>
+                          <p className={`text-sm ${stock.positive ? 'text-green-600' : 'text-red-600'}`}>
+                            {stock.change}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
             <TabsContent value="stocks" className="space-y-6">
               {Object.entries(stocksByProvider).map(([exchange, stocks]) => (
