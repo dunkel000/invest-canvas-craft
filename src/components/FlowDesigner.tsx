@@ -44,7 +44,7 @@ const initialNodes: Node[] = [
     id: 'demo-asset',
     type: 'initialAsset',
     data: { 
-      assetName: 'AAPL Stock',
+      assetName: 'Apple Inc. (AAPL)',
       assetType: 'Stock',
       costBasis: 15000,
       quantity: 100,
@@ -60,7 +60,8 @@ const initialNodes: Node[] = [
       label: 'AAPL Dividends',
       cashflows: [
         { date: '2024-02-15', amount: 25, type: 'Dividend' },
-        { date: '2024-05-15', amount: 25, type: 'Dividend' }
+        { date: '2024-05-15', amount: 25, type: 'Dividend' },
+        { date: '2024-08-15', amount: 25, type: 'Dividend' }
       ]
     },
     position: { x: 400, y: 100 }
@@ -69,7 +70,11 @@ const initialNodes: Node[] = [
     id: 'demo-formulas',
     type: 'mathFormulas',
     data: { 
-      label: 'Performance Metrics'
+      label: 'Performance Analytics',
+      formulas: [
+        { name: 'ROI', expression: '(18500 - 15000) / 15000 = 23.33%' },
+        { name: 'Dividend Yield', expression: '75 / 15000 = 0.5%' }
+      ]
     },
     position: { x: 700, y: 100 }
   },
@@ -386,11 +391,19 @@ export function AssetComposer() {
                   <DialogTitle>Select Asset to Compose</DialogTitle>
                 </DialogHeader>
                 <div className="max-h-96 overflow-y-auto space-y-2">
-                  {assets.map((asset) => (
+                  {assets.length > 0 ? assets.map((asset) => (
                     <div
                       key={asset.id}
-                      className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 cursor-pointer"
-                      onClick={() => loadAssetIntoFlow(asset.id)}
+                      className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => {
+                        loadAssetIntoFlow(asset.id)
+                        // Close the dialog after selection
+                        const dialog = document.querySelector('[role="dialog"]') as HTMLElement
+                        if (dialog) {
+                          const closeButton = dialog.querySelector('[aria-label="Close"]') as HTMLElement
+                          closeButton?.click()
+                        }
+                      }}
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
@@ -408,10 +421,10 @@ export function AssetComposer() {
                         <div className="text-xs text-muted-foreground">{asset.quantity} shares</div>
                       </div>
                     </div>
-                  ))}
-                  {assets.length === 0 && (
+                  )) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      No assets found. Create an asset first.
+                      <p>No assets found.</p>
+                      <p className="text-sm mt-2">Create an asset first or use the sample composition below.</p>
                     </div>
                   )}
                 </div>
@@ -553,9 +566,12 @@ export function AssetComposer() {
           <Controls />
           <MiniMap 
             style={{ 
-              backgroundColor: 'hsl(var(--card))',
+              backgroundColor: 'hsl(var(--muted))',
               border: '1px solid hsl(var(--border))'
             }}
+            nodeColor="hsl(var(--primary))"
+            nodeStrokeColor="hsl(var(--border))"
+            maskColor="hsl(var(--background) / 0.8)"
           />
           <Background 
             color="hsl(var(--border))" 
