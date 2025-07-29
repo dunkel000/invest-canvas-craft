@@ -94,9 +94,9 @@ export function AppSidebar() {
   )
 
   return (
-    <Sidebar className="bg-gradient-to-br from-green-600 to-green-700 border-r border-white/10">
+    <Sidebar className="bg-gradient-to-br from-green-600 to-green-700">
       <SidebarContent className="bg-transparent">
-        <div className="p-4 border-b border-white/10 bg-transparent">
+        <div className="p-4 border-b border-white/20 bg-transparent">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <Wallet className="w-5 h-5 text-white" />
@@ -166,7 +166,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Settings & Sign Out */}
-        <SidebarGroup className="mt-auto pt-4 border-t border-white/10">
+        <SidebarGroup className="mt-auto pt-4 border-t border-white/20">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {renderMenuItems(settingsItems)}
