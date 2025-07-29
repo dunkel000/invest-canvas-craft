@@ -59,6 +59,9 @@ const otherItems = [
   { title: "Asset Composer", url: "/flow-designer", icon: GitBranch },
   { title: "API Connections", url: "/api-connections", icon: Database },
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
+]
+
+const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
 ]
 
@@ -71,7 +74,7 @@ export function AppSidebar() {
 
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path)
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-green-600 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
 
   const handleSignOut = () => {
     signOut()
@@ -119,7 +122,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <Collapsible open={wealthOpen} onOpenChange={setWealthOpen}>
             <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
+              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-green-600 hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                 <span>Wealth Management</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${wealthOpen ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
@@ -138,7 +141,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <Collapsible open={portfoliosOpen} onOpenChange={setPortfoliosOpen}>
             <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
+              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-green-600 hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                 <span>Portfolios</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${portfoliosOpen ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
@@ -162,11 +165,13 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-auto">
+        {/* Settings & Sign Out */}
+        <SidebarGroup className="mt-auto pt-4 border-t border-sidebar-border">
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
+              {renderMenuItems(settingsItems)}
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive">
+                <SidebarMenuButton onClick={handleSignOut} className="text-green-600 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>
                 </SidebarMenuButton>
