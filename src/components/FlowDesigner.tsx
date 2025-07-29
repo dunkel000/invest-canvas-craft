@@ -26,17 +26,17 @@ import { toast } from "sonner"
 import { useSearchParams } from "react-router-dom"
 
 // Import custom nodes
-import InitialAssetNode from './FlowNodes/InitialAssetNode'
-import CashflowsNode from './FlowNodes/CashflowsNode'
-import MathFormulasNode from './FlowNodes/MathFormulasNode'
-import RiskAssessmentNode from './FlowNodes/RiskAssessmentNode'
+import EditableInitialAssetNode from './FlowNodes/EditableInitialAssetNode'
+import EditableCashflowsNode from './FlowNodes/EditableCashflowsNode'
+import EditableMathFormulasNode from './FlowNodes/EditableMathFormulasNode'
+import EditableRiskAssessmentNode from './FlowNodes/EditableRiskAssessmentNode'
 
 // Node types configuration
 const nodeTypes = {
-  initialAsset: InitialAssetNode,
-  cashflows: CashflowsNode,
-  mathFormulas: MathFormulasNode,
-  riskAssessment: RiskAssessmentNode,
+  initialAsset: EditableInitialAssetNode,
+  cashflows: EditableCashflowsNode,
+  mathFormulas: EditableMathFormulasNode,
+  riskAssessment: EditableRiskAssessmentNode,
 }
 
 const initialNodes: Node[] = [
@@ -179,6 +179,7 @@ export function AssetComposer() {
         id: `asset-${asset.id}`,
         type: 'initialAsset',
         data: {
+          assetId: asset.id,
           assetName: asset.name,
           assetType: asset.asset_type,
           costBasis: asset.purchase_price || 0,
@@ -213,6 +214,7 @@ export function AssetComposer() {
           id: `asset-${Date.now()}`,
           type: 'initialAsset',
           data: selectedAsset ? {
+            assetId: selectedAsset.id,
             assetName: selectedAsset.name,
             assetType: selectedAsset.asset_type,
             costBasis: selectedAsset.purchase_price || 0,
@@ -221,7 +223,7 @@ export function AssetComposer() {
             purchaseDate: new Date().toISOString().split('T')[0]
           } : { 
             assetName: 'New Asset',
-            assetType: 'Stock',
+            assetType: 'stock',
             costBasis: 0,
             quantity: 0,
             currentMarketValue: 0
