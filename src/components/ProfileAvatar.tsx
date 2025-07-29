@@ -27,6 +27,14 @@ export function ProfileAvatar() {
   useEffect(() => {
     if (user?.id) {
       fetchProfile()
+    } else {
+      // Mock user for development
+      setProfile({
+        id: '1',
+        user_id: '1',
+        display_name: 'Demo User',
+        avatar_url: null
+      })
     }
   }, [user?.id])
   
@@ -56,11 +64,16 @@ export function ProfileAvatar() {
     if (user?.email) {
       return user.email[0].toUpperCase()
     }
-    return 'U'
+    return 'DU'
   }
   
   const handleSignOut = async () => {
-    await signOut()
+    if (signOut) {
+      await signOut()
+    } else {
+      // Mock sign out for development
+      console.log("Sign out clicked")
+    }
   }
 
   return (
@@ -79,10 +92,10 @@ export function ProfileAvatar() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {profile?.display_name || "User"}
+              {profile?.display_name || "Demo User"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user?.email}
+              {user?.email || "demo@example.com"}
             </p>
           </div>
         </DropdownMenuLabel>
