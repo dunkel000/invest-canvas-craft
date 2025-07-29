@@ -23,17 +23,17 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
   
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAssetType, setSelectedAssetType] = useState('');
-  const [selectedSector, setSelectedSector] = useState('');
-  const [selectedSource, setSelectedSource] = useState('');
+  const [selectedAssetType, setSelectedAssetType] = useState('all');
+  const [selectedSector, setSelectedSector] = useState('all');
+  const [selectedSource, setSelectedSource] = useState('all');
   const [allocationInputs, setAllocationInputs] = useState<{ [key: string]: string }>({});
 
   const filteredAssets = universeAssets.filter(asset => {
     const matchesSearch = asset.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          asset.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = !selectedAssetType || asset.asset_type === selectedAssetType;
-    const matchesSector = !selectedSector || asset.sector === selectedSector;
-    const matchesSource = !selectedSource || asset.source === selectedSource;
+    const matchesType = selectedAssetType === 'all' || !selectedAssetType || asset.asset_type === selectedAssetType;
+    const matchesSector = selectedSector === 'all' || !selectedSector || asset.sector === selectedSector;
+    const matchesSource = selectedSource === 'all' || !selectedSource || asset.source === selectedSource;
     
     return matchesSearch && matchesType && matchesSector && matchesSource;
   });
@@ -166,7 +166,7 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
                         <SelectValue placeholder="Asset Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Types</SelectItem>
+                        <SelectItem value="all">All Types</SelectItem>
                         {uniqueAssetTypes.map(type => (
                           <SelectItem key={type} value={type}>{type}</SelectItem>
                         ))}
@@ -177,7 +177,7 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
                         <SelectValue placeholder="Sector" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Sectors</SelectItem>
+                        <SelectItem value="all">All Sectors</SelectItem>
                         {uniqueSectors.map(sector => (
                           <SelectItem key={sector} value={sector}>{sector}</SelectItem>
                         ))}
@@ -188,7 +188,7 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
                         <SelectValue placeholder="Source" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Sources</SelectItem>
+                        <SelectItem value="all">All Sources</SelectItem>
                         {uniqueSources.map(source => (
                           <SelectItem key={source} value={source}>{source}</SelectItem>
                         ))}
@@ -198,9 +198,9 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
                       variant="outline" 
                       onClick={() => {
                         setSearchTerm('');
-                        setSelectedAssetType('');
-                        setSelectedSector('');
-                        setSelectedSource('');
+                        setSelectedAssetType('all');
+                        setSelectedSector('all');
+                        setSelectedSource('all');
                       }}
                     >
                       Clear
