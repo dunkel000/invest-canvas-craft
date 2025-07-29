@@ -1,0 +1,1 @@
+SELECT promote_to_admin('diego.ortiz.celis@gmail.com');
