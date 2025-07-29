@@ -56,7 +56,7 @@ const portfolioItems = [
 const otherItems = [
   { title: "Discover", url: "/discover", icon: Search },
   { title: "Asset Types", url: "/asset-types", icon: Layers },
-  { title: "Flow Designer", url: "/flow-designer", icon: GitBranch },
+  { title: "Asset Composer", url: "/flow-designer", icon: GitBranch },
   { title: "API Connections", url: "/api-connections", icon: Database },
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
   { title: "Settings", url: "/settings", icon: Settings },
@@ -71,7 +71,7 @@ export function AppSidebar() {
 
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path)
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-sidebar-accent text-sidebar-primary font-medium" : "hover:bg-sidebar-accent/50"
+    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
 
   const handleSignOut = () => {
     signOut()
@@ -91,9 +91,9 @@ export function AppSidebar() {
   )
 
   return (
-    <Sidebar>
-      <SidebarContent>
-        <div className="p-4 border-b border-sidebar-border">
+    <Sidebar className="bg-sidebar border-r border-sidebar-border">
+      <SidebarContent className="bg-sidebar">
+        <div className="p-4 border-b border-sidebar-border bg-sidebar">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <Wallet className="w-5 h-5 text-white" />
@@ -119,7 +119,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <Collapsible open={wealthOpen} onOpenChange={setWealthOpen}>
             <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md">
+              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                 <span>Wealth Management</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${wealthOpen ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>
@@ -138,7 +138,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <Collapsible open={portfoliosOpen} onOpenChange={setPortfoliosOpen}>
             <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md">
+              <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                 <span>Portfolios</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${portfoliosOpen ? 'rotate-180' : ''}`} />
               </CollapsibleTrigger>

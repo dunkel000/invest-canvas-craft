@@ -567,7 +567,9 @@ export function AssetComposer() {
           <MiniMap 
             style={{ 
               backgroundColor: 'hsl(var(--muted))',
-              border: '1px solid hsl(var(--border))'
+              border: '1px solid hsl(var(--border))',
+              width: '120px',
+              height: '80px'
             }}
             nodeColor="hsl(var(--primary))"
             nodeStrokeColor="hsl(var(--border))"
