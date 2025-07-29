@@ -16,7 +16,9 @@ import {
   Link,
   Briefcase,
   Users,
-  Search
+  Search,
+  Crown,
+  Shield
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
@@ -61,6 +63,13 @@ const otherItems = [
   { title: "Analytics", url: "/analytics", icon: TrendingUp },
 ]
 
+const adminItems = [
+  { title: "Admin Dashboard", url: "/admin", icon: Crown },
+  { title: "User Management", url: "/admin/users", icon: Users },
+  { title: "Asset Management", url: "/admin/assets", icon: Database },
+  { title: "System Analytics", url: "/admin/analytics", icon: BarChart3 },
+]
+
 const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
 ]
@@ -68,9 +77,10 @@ const settingsItems = [
 export function AppSidebar() {
   const location = useLocation()
   const currentPath = location.pathname
-  const { signOut } = useAuth()
+  const { signOut, isAdmin } = useAuth()
   const [wealthOpen, setWealthOpen] = useState(true)
   const [portfoliosOpen, setPortfoliosOpen] = useState(true)
+  const [adminOpen, setAdminOpen] = useState(true)
 
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path)
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
@@ -155,6 +165,30 @@ export function AppSidebar() {
             </CollapsibleContent>
           </Collapsible>
         </SidebarGroup>
+
+        {/* Admin Section - Only visible for admins */}
+        {isAdmin && (
+          <SidebarGroup>
+            <Collapsible open={adminOpen} onOpenChange={setAdminOpen}>
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-green-600 hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
+                  <span className="flex items-center gap-2">
+                    <Crown className="h-4 w-4" />
+                    Admin
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform text-green-600 ${adminOpen ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {renderMenuItems(adminItems)}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </SidebarGroup>
+        )}
 
         {/* Other Items */}
         <SidebarGroup>

@@ -27,6 +27,10 @@ import ApiSyncedPortfolios from "./pages/portfolios/ApiSyncedPortfolios";
 import ManualPortfolios from "./pages/portfolios/ManualPortfolios";
 import ClientPortfolios from "./pages/portfolios/ClientPortfolios";
 
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UserManagement from "./pages/admin/UserManagement";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -52,6 +56,13 @@ const App = () => (
               <Route path="/portfolios/api-synced" element={<ApiSyncedPortfolios />} />
               <Route path="/portfolios/manual" element={<ManualPortfolios />} />
               <Route path="/portfolios/clients" element={<ClientPortfolios />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users" element={<UserManagement />} />
+              <Route path="/admin/assets" element={<div>Asset Management coming soon</div>} />
+              <Route path="/admin/analytics" element={<div>System Analytics coming soon</div>} />
+              <Route path="/admin/settings" element={<div>Admin Settings coming soon</div>} />
               
               {/* Legacy and Other Routes */}
               <Route path="/discover" element={<Discover />} />
