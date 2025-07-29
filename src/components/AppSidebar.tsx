@@ -15,7 +15,8 @@ import {
   User,
   Link,
   Briefcase,
-  Users
+  Users,
+  Search
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
@@ -53,6 +54,7 @@ const portfolioItems = [
 ]
 
 const otherItems = [
+  { title: "Discover", url: "/discover", icon: Search },
   { title: "Asset Types", url: "/asset-types", icon: Layers },
   { title: "Flow Designer", url: "/flow-designer", icon: GitBranch },
   { title: "API Connections", url: "/api-connections", icon: Database },

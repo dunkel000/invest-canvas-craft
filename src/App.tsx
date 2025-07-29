@@ -13,6 +13,7 @@ import ApiConnections from "./pages/ApiConnections";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Discover from "./pages/Discover";
 
 // Wealth Management Pages
 import AllPortfolios from "./pages/wealth/AllPortfolios";
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="/portfolios/clients" element={<ClientPortfolios />} />
               
               {/* Legacy and Other Routes */}
+              <Route path="/discover" element={<Discover />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/asset-types" element={<Assets />} />
               <Route path="/assets" element={<Assets />} />
