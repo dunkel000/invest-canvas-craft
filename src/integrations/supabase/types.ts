@@ -53,8 +53,69 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_universe: {
+        Row: {
+          asset_type: Database["public"]["Enums"]["asset_type"]
+          country: string | null
+          created_at: string
+          current_price: number | null
+          description: string | null
+          exchange: string | null
+          id: string
+          industry: string | null
+          is_active: boolean | null
+          market_cap: number | null
+          metadata: Json | null
+          name: string
+          sector: string | null
+          source: string
+          source_id: string | null
+          symbol: string
+          updated_at: string
+        }
+        Insert: {
+          asset_type: Database["public"]["Enums"]["asset_type"]
+          country?: string | null
+          created_at?: string
+          current_price?: number | null
+          description?: string | null
+          exchange?: string | null
+          id?: string
+          industry?: string | null
+          is_active?: boolean | null
+          market_cap?: number | null
+          metadata?: Json | null
+          name: string
+          sector?: string | null
+          source?: string
+          source_id?: string | null
+          symbol: string
+          updated_at?: string
+        }
+        Update: {
+          asset_type?: Database["public"]["Enums"]["asset_type"]
+          country?: string | null
+          created_at?: string
+          current_price?: number | null
+          description?: string | null
+          exchange?: string | null
+          id?: string
+          industry?: string | null
+          is_active?: boolean | null
+          market_cap?: number | null
+          metadata?: Json | null
+          name?: string
+          sector?: string | null
+          source?: string
+          source_id?: string | null
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       assets: {
         Row: {
+          allocation_percentage: number | null
           api_connection_id: string | null
           asset_type: Database["public"]["Enums"]["asset_type"]
           created_at: string
@@ -67,11 +128,14 @@ export type Database = {
           quantity: number
           risk_category: Database["public"]["Enums"]["risk_category"] | null
           symbol: string | null
+          target_allocation_percentage: number | null
           total_value: number | null
+          universe_asset_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          allocation_percentage?: number | null
           api_connection_id?: string | null
           asset_type: Database["public"]["Enums"]["asset_type"]
           created_at?: string
@@ -84,11 +148,14 @@ export type Database = {
           quantity?: number
           risk_category?: Database["public"]["Enums"]["risk_category"] | null
           symbol?: string | null
+          target_allocation_percentage?: number | null
           total_value?: number | null
+          universe_asset_id?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          allocation_percentage?: number | null
           api_connection_id?: string | null
           asset_type?: Database["public"]["Enums"]["asset_type"]
           created_at?: string
@@ -101,7 +168,9 @@ export type Database = {
           quantity?: number
           risk_category?: Database["public"]["Enums"]["risk_category"] | null
           symbol?: string | null
+          target_allocation_percentage?: number | null
           total_value?: number | null
+          universe_asset_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -118,6 +187,13 @@ export type Database = {
             columns: ["portfolio_id"]
             isOneToOne: false
             referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_universe_asset_id_fkey"
+            columns: ["universe_asset_id"]
+            isOneToOne: false
+            referencedRelation: "asset_universe"
             referencedColumns: ["id"]
           },
         ]
@@ -258,6 +334,47 @@ export type Database = {
             columns: ["flow_id"]
             isOneToOne: false
             referencedRelation: "flows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolio_performance: {
+        Row: {
+          created_at: string
+          daily_return: number | null
+          daily_return_percentage: number | null
+          date: string
+          id: string
+          portfolio_id: string
+          total_value: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_return?: number | null
+          daily_return_percentage?: number | null
+          date?: string
+          id?: string
+          portfolio_id: string
+          total_value?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_return?: number | null
+          daily_return_percentage?: number | null
+          date?: string
+          id?: string
+          portfolio_id?: string
+          total_value?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_performance_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
             referencedColumns: ["id"]
           },
         ]
