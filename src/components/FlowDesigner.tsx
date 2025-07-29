@@ -25,96 +25,96 @@ import { toast } from "sonner"
 import { useSearchParams } from "react-router-dom"
 
 // Import custom nodes
-import AssetSourceNode from './FlowNodes/AssetSourceNode'
-import CashflowNode from './FlowNodes/CashflowNode'
-import MathFunctionNode from './FlowNodes/MathFunctionNode'
-import RiskNode from './FlowNodes/RiskNode'
+import InitialAssetNode from './FlowNodes/InitialAssetNode'
+import CashflowsNode from './FlowNodes/CashflowsNode'
+import MathFormulasNode from './FlowNodes/MathFormulasNode'
+import RiskAssessmentNode from './FlowNodes/RiskAssessmentNode'
 
 // Node types configuration
 const nodeTypes = {
-  assetSource: AssetSourceNode,
-  cashflow: CashflowNode,
-  mathFunction: MathFunctionNode,
-  risk: RiskNode,
+  initialAsset: InitialAssetNode,
+  cashflows: CashflowsNode,
+  mathFormulas: MathFormulasNode,
+  riskAssessment: RiskAssessmentNode,
 }
 
 const initialNodes: Node[] = [
   {
-    id: '1',
-    type: 'input',
-    data: { label: 'Portfolio Data Source' },
-    position: { x: 100, y: 100 },
-    style: { 
-      backgroundColor: 'hsl(var(--card))',
-      color: 'hsl(var(--foreground))',
-      border: '1px solid hsl(var(--border))'
-    }
+    id: 'demo-asset',
+    type: 'initialAsset',
+    data: { 
+      assetName: 'AAPL Stock',
+      assetType: 'Stock',
+      costBasis: 15000,
+      quantity: 100,
+      currentMarketValue: 18500,
+      purchaseDate: '2024-01-15'
+    },
+    position: { x: 100, y: 100 }
   },
   {
-    id: '2',
-    data: { label: 'Risk Assessment' },
-    position: { x: 300, y: 100 },
-    style: { 
-      backgroundColor: 'hsl(var(--card))',
-      color: 'hsl(var(--foreground))',
-      border: '1px solid hsl(var(--border))'
-    }
+    id: 'demo-cashflows',
+    type: 'cashflows',
+    data: { 
+      label: 'AAPL Dividends',
+      cashflows: [
+        { date: '2024-02-15', amount: 25, type: 'Dividend' },
+        { date: '2024-05-15', amount: 25, type: 'Dividend' }
+      ]
+    },
+    position: { x: 400, y: 100 }
   },
   {
-    id: '3',
-    data: { label: 'Asset Allocation' },
-    position: { x: 500, y: 100 },
-    style: { 
-      backgroundColor: 'hsl(var(--card))',
-      color: 'hsl(var(--foreground))',
-      border: '1px solid hsl(var(--border))'
-    }
+    id: 'demo-formulas',
+    type: 'mathFormulas',
+    data: { 
+      label: 'Performance Metrics'
+    },
+    position: { x: 700, y: 100 }
   },
   {
-    id: '4',
-    type: 'output',
-    data: { label: 'Portfolio Optimization' },
-    position: { x: 700, y: 100 },
-    style: { 
-      backgroundColor: 'hsl(var(--primary))',
-      color: 'hsl(var(--primary-foreground))',
-      border: '1px solid hsl(var(--primary))'
-    }
+    id: 'demo-risk',
+    type: 'riskAssessment',
+    data: { 
+      label: 'AAPL Risk Profile',
+      riskClassifications: ['Market Risk', 'Liquidity Risk']
+    },
+    position: { x: 400, y: 300 }
   },
 ]
 
 const initialEdges: Edge[] = [
   {
-    id: 'e1-2',
-    source: '1',
-    target: '2',
+    id: 'e-asset-cashflows',
+    source: 'demo-asset',
+    target: 'demo-cashflows',
     markerEnd: { type: MarkerType.ArrowClosed },
     style: { stroke: 'hsl(var(--primary))' }
   },
   {
-    id: 'e2-3',
-    source: '2',
-    target: '3',
+    id: 'e-cashflows-formulas',
+    source: 'demo-cashflows',
+    target: 'demo-formulas',
     markerEnd: { type: MarkerType.ArrowClosed },
     style: { stroke: 'hsl(var(--primary))' }
   },
   {
-    id: 'e3-4',
-    source: '3',
-    target: '4',
+    id: 'e-asset-risk',
+    source: 'demo-asset',
+    target: 'demo-risk',
     markerEnd: { type: MarkerType.ArrowClosed },
     style: { stroke: 'hsl(var(--primary))' }
   },
 ]
 
-export function FlowDesigner() {
+export function AssetComposer() {
   const [searchParams] = useSearchParams()
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const [assets, setAssets] = useState<any[]>([])
   const [flows, setFlows] = useState<any[]>([])
   const [selectedAssetId, setSelectedAssetId] = useState<string>('')
-  const [selectedNodeType, setSelectedNodeType] = useState<string>('assetSource')
+  const [selectedNodeType, setSelectedNodeType] = useState<string>('initialAsset')
   const [addNodeDialogOpen, setAddNodeDialogOpen] = useState(false)
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
   const [importDialogOpen, setImportDialogOpen] = useState(false)
@@ -171,15 +171,14 @@ export function FlowDesigner() {
 
       const assetNode: Node = {
         id: `asset-${asset.id}`,
-        type: 'assetSource',
+        type: 'initialAsset',
         data: {
-          label: asset.name,
-          assetId: asset.id,
           assetName: asset.name,
           assetType: asset.asset_type,
+          costBasis: asset.purchase_price || 0,
           quantity: asset.quantity,
-          currentPrice: asset.current_price,
-          riskCategory: asset.risk_category
+          currentMarketValue: asset.current_price ? asset.current_price * asset.quantity : 0,
+          purchaseDate: asset.created_at ? new Date(asset.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
         },
         position: { x: 100, y: 100 }
       }
@@ -202,60 +201,64 @@ export function FlowDesigner() {
     let newNode: Node
 
     switch (selectedNodeType) {
-      case 'assetSource':
+      case 'initialAsset':
         const selectedAsset = assets.find(a => a.id === selectedAssetId)
         newNode = {
           id: `asset-${Date.now()}`,
-          type: 'assetSource',
+          type: 'initialAsset',
           data: selectedAsset ? {
-            label: selectedAsset.name,
-            assetId: selectedAsset.id,
             assetName: selectedAsset.name,
             assetType: selectedAsset.asset_type,
+            costBasis: selectedAsset.purchase_price || 0,
             quantity: selectedAsset.quantity,
-            currentPrice: selectedAsset.current_price,
-            riskCategory: selectedAsset.risk_category
-          } : { label: 'New Asset Source' },
-          position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 }
-        }
-        break
-
-      case 'cashflow':
-        newNode = {
-          id: `cashflow-${Date.now()}`,
-          type: 'cashflow',
-          data: {
-            label: 'New Cashflow',
-            cashflowType: 'income',
-            amount: 1000,
-            frequency: 'monthly'
+            currentMarketValue: selectedAsset.current_price ? selectedAsset.current_price * selectedAsset.quantity : 0,
+            purchaseDate: new Date().toISOString().split('T')[0]
+          } : { 
+            assetName: 'New Asset',
+            assetType: 'Stock',
+            costBasis: 0,
+            quantity: 0,
+            currentMarketValue: 0
           },
           position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 }
         }
         break
 
-      case 'mathFunction':
+      case 'cashflows':
         newNode = {
-          id: `math-${Date.now()}`,
-          type: 'mathFunction',
+          id: `cashflows-${Date.now()}`,
+          type: 'cashflows',
           data: {
-            label: 'Math Function',
-            functionType: 'add',
-            formula: 'A + B'
+            label: 'Asset Cashflows',
+            cashflows: [
+              { date: new Date().toISOString().split('T')[0], amount: 100, type: 'Dividend' }
+            ]
           },
           position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 }
         }
         break
 
-      case 'risk':
+      case 'mathFormulas':
+        newNode = {
+          id: `formulas-${Date.now()}`,
+          type: 'mathFormulas',
+          data: {
+            label: 'Financial Analytics',
+            formulas: [
+              { name: 'ROI', expression: '(currentMarketValue - costBasis) / costBasis' }
+            ]
+          },
+          position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 }
+        }
+        break
+
+      case 'riskAssessment':
         newNode = {
           id: `risk-${Date.now()}`,
-          type: 'risk',
+          type: 'riskAssessment',
           data: {
-            label: 'Risk Assessment',
-            riskCategory: 'medium',
-            riskScore: 50,
-            exposure: 25
+            label: 'Risk Analysis',
+            riskClassifications: ['Market Risk']
           },
           position: { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 }
         }
@@ -307,9 +310,10 @@ export function FlowDesigner() {
   }
 
   const exportFlow = () => {
+    const assetName = nodes.find(n => n.type === 'initialAsset')?.data?.assetName || 'asset'
     const exportData = {
-      flow: {
-        name: flowName || 'Exported Flow',
+      assetComposition: {
+        name: flowName || `${assetName} Composition`,
         description: flowDescription,
         nodes: nodes,
         edges: edges
@@ -322,13 +326,13 @@ export function FlowDesigner() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `flow-export-${new Date().toISOString().split('T')[0]}.json`
+    a.download = `${String(assetName).toLowerCase().replace(/\s+/g, '-')}-asset.json`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
     
-    toast.success('Flow exported successfully')
+    toast.success('Asset composition exported successfully')
   }
 
   const importFlow = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -339,16 +343,18 @@ export function FlowDesigner() {
       const text = await file.text()
       const importData = JSON.parse(text)
       
-      if (!importData.flow || !importData.flow.nodes || !importData.flow.edges) {
-        throw new Error('Invalid flow format')
+      // Support both old flow format and new asset composition format
+      const compositionData = importData.assetComposition || importData.flow
+      if (!compositionData || !compositionData.nodes || !compositionData.edges) {
+        throw new Error('Invalid asset composition format')
       }
 
-      setNodes(importData.flow.nodes)
-      setEdges(importData.flow.edges)
-      setFlowName(importData.flow.name || 'Imported Flow')
-      setFlowDescription(importData.flow.description || '')
+      setNodes(compositionData.nodes)
+      setEdges(compositionData.edges)
+      setFlowName(compositionData.name || 'Imported Asset Composition')
+      setFlowDescription(compositionData.description || '')
 
-      toast.success('Flow imported successfully')
+      toast.success('Asset composition imported successfully')
       setImportDialogOpen(false)
     } catch (error) {
       toast.error('Failed to import flow')
@@ -361,9 +367,9 @@ export function FlowDesigner() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-foreground">Investment Flow Designer</CardTitle>
+            <CardTitle className="text-foreground">Asset Composer</CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              Design your investment portfolio flow and asset relationships
+              Design and analyze your asset compositions with cashflows, formulas, and risk assessments
             </p>
           </div>
           <div className="flex gap-2">
@@ -385,16 +391,16 @@ export function FlowDesigner() {
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="assetSource">Asset Source</SelectItem>
-                        <SelectItem value="cashflow">Cashflow</SelectItem>
-                        <SelectItem value="mathFunction">Math Function</SelectItem>
-                        <SelectItem value="risk">Risk Assessment</SelectItem>
-                      </SelectContent>
+                        <SelectContent>
+                          <SelectItem value="initialAsset">Initial Asset</SelectItem>
+                          <SelectItem value="cashflows">Cashflows</SelectItem>
+                          <SelectItem value="mathFormulas">Math Formulas</SelectItem>
+                          <SelectItem value="riskAssessment">Risk Assessment</SelectItem>
+                        </SelectContent>
                     </Select>
                   </div>
 
-                  {selectedNodeType === 'assetSource' && (
+                  {selectedNodeType === 'initialAsset' && (
                     <div>
                       <Label htmlFor="asset-select">Select Asset</Label>
                       <Select value={selectedAssetId} onValueChange={setSelectedAssetId}>
@@ -428,7 +434,7 @@ export function FlowDesigner() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Import Flow</DialogTitle>
+                  <DialogTitle>Import Asset Composition</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
@@ -453,16 +459,16 @@ export function FlowDesigner() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Save Flow</DialogTitle>
+                  <DialogTitle>Save Asset Composition</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="flow-name">Flow Name</Label>
+                    <Label htmlFor="flow-name">Composition Name</Label>
                     <Input
                       id="flow-name"
                       value={flowName}
                       onChange={(e) => setFlowName(e.target.value)}
-                      placeholder="Enter flow name"
+                      placeholder="Enter composition name"
                     />
                   </div>
                   <div>
@@ -475,7 +481,7 @@ export function FlowDesigner() {
                     />
                   </div>
                   <Button onClick={saveFlow} className="w-full">
-                    Save Flow
+                    Save Composition
                   </Button>
                 </div>
               </DialogContent>
