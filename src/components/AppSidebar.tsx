@@ -94,7 +94,7 @@ export function AppSidebar() {
   )
 
   return (
-    <Sidebar className="bg-gradient-to-br from-green-600 to-green-700 border-r border-green-500/20">
+    <Sidebar className="bg-gradient-to-br from-green-600 to-green-700 border-r border-white/10">
       <SidebarContent className="bg-transparent">
         <div className="p-4 border-b border-white/10 bg-transparent">
           <div className="flex items-center gap-3">
