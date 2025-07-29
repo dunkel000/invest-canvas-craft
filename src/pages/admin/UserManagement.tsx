@@ -26,11 +26,40 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      // For now, we'll use a mock implementation since we can't directly query auth.users
-      // In a real implementation, you'd need an admin API endpoint or edge function
-      setUsers([]);
+      // Fetch users from profiles table with their roles
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('user_id, display_name')
+        .order('created_at', { ascending: false });
+
+      if (profilesError) throw profilesError;
+
+      // Fetch all user roles
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+
+      // Combine the data
+      const usersData: UserData[] = profiles?.map(profile => {
+        const roles = userRoles?.filter(role => role.user_id === profile.user_id).map(role => role.role) || ['user'];
+        return {
+          id: profile.user_id,
+          email: profile.display_name || 'No display name',
+          created_at: new Date().toISOString(), // We can't get auth creation date from profiles
+          roles: roles.length > 0 ? roles : ['user']
+        };
+      }) || [];
+
+      setUsers(usersData);
     } catch (error) {
       console.error('Error fetching users:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch users",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -142,13 +171,54 @@ const UserManagement = () => {
                 <div className="flex items-center justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                 </div>
+              ) : users.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User ID</TableHead>
+                      <TableHead>Display Name</TableHead>
+                      <TableHead>Roles</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-mono text-xs">
+                          {user.id.slice(0, 8)}...
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-1 flex-wrap">
+                            {user.roles.map((role) => (
+                              <Badge
+                                key={role}
+                                variant={getRoleVariant(role)}
+                                className="flex items-center gap-1"
+                              >
+                                {getRoleIcon(role)}
+                                {role}
+                              </Badge>
+                            ))}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setPromotionEmail(user.email)}
+                          >
+                            Manage
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               ) : (
                 <div className="text-center p-8">
                   <p className="text-muted-foreground">
-                    User listing requires additional admin API endpoints to be implemented.
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    For now, use the "Promote to Admin" function above to manage admin roles.
+                    No users found. Users will appear here after they create profiles.
                   </p>
                 </div>
               )}

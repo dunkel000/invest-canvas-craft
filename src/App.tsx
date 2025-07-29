@@ -30,6 +30,7 @@ import ClientPortfolios from "./pages/portfolios/ClientPortfolios";
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
+import Analytics from "./pages/admin/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -61,7 +62,7 @@ const App = () => (
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UserManagement />} />
               <Route path="/admin/assets" element={<div>Asset Management coming soon</div>} />
-              <Route path="/admin/analytics" element={<div>System Analytics coming soon</div>} />
+              <Route path="/admin/analytics" element={<Analytics />} />
               <Route path="/admin/settings" element={<div>Admin Settings coming soon</div>} />
               
               {/* Legacy and Other Routes */}
