@@ -365,6 +365,33 @@ export type Database = {
           },
         ]
       }
+      module_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       portfolio_performance: {
         Row: {
           created_at: string
@@ -463,6 +490,81 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      role_module_permissions: {
+        Row: {
+          created_at: string
+          id: string
+          is_enabled: boolean | null
+          module_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          module_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          module_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      system_modules: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          is_active: boolean | null
+          min_role: Database["public"]["Enums"]["app_role"]
+          module_id: string
+          name: string
+          path: string
+          requires_subscription: boolean | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          icon: string
+          id?: string
+          is_active?: boolean | null
+          min_role?: Database["public"]["Enums"]["app_role"]
+          module_id: string
+          name: string
+          path: string
+          requires_subscription?: boolean | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          is_active?: boolean | null
+          min_role?: Database["public"]["Enums"]["app_role"]
+          module_id?: string
+          name?: string
+          path?: string
+          requires_subscription?: boolean | null
+          sort_order?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
