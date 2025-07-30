@@ -604,9 +604,25 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_module_permission: {
+        Args: { _user_id: string; _module_id: string }
+        Returns: boolean
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      get_user_accessible_modules: {
+        Args: { _user_id: string }
+        Returns: {
+          module_id: string
+          name: string
+          path: string
+          icon: string
+          category: string
+          description: string
+          sort_order: number
+        }[]
       }
       get_user_statistics: {
         Args: { _user_id: string }
@@ -631,6 +647,14 @@ export type Database = {
         Args: {
           _user_email: string
           _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
+      update_role_module_permission: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _module_id: string
+          _enabled: boolean
         }
         Returns: boolean
       }
