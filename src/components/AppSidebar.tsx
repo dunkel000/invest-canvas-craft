@@ -39,7 +39,9 @@ export function AppSidebar() {
 
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path)
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : "text-green-600 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+    isActive
+      ? "bg-sidebar-accent text-green-600 font-medium hover:text-green-600 active:text-green-600"
+      : "text-green-600 hover:bg-sidebar-accent/50 hover:text-green-600 active:text-green-600"
 
   const handleSignOut = () => {
     signOut()
@@ -225,7 +227,7 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-1">
               {modulesByCategory.settings && renderMenuItems(modulesByCategory.settings)}
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleSignOut} className="text-green-600 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground">
+                <SidebarMenuButton onClick={handleSignOut} className="text-green-600 hover:bg-sidebar-accent/50 hover:text-green-600 active:text-green-600">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>
                 </SidebarMenuButton>
