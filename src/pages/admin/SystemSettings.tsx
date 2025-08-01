@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import AdminRoute from "@/components/AdminRoute";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -12,9 +12,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Database, Mail, Shield, AlertTriangle, Download, Package, Users, Crown, Star, User, Zap } from "lucide-react";
+import { Settings, Database, Mail, Shield, AlertTriangle, Download, Package, Users, Crown, Star, User, Zap, TrendingUp } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface SystemModule {
   id: string;
@@ -36,6 +37,15 @@ interface RolePermission {
   is_enabled: boolean;
 }
 
+interface RoleLimits {
+  role: string;
+  max_portfolios: number;
+  max_api_connections: number;
+  max_requests_per_day: number;
+  subscription_tier: string;
+  features_enabled: any;
+}
+
 const roleLabels = {
   admin: 'Admin',
   investment_professional: 'Investment Professional',
@@ -46,10 +56,18 @@ const roleLabels = {
 
 const roleIcons = {
   admin: Crown,
-  investment_professional: Star,
-  premium_user: Zap,
+  investment_professional: TrendingUp,
+  premium_user: Star,
   standard_user: User,
-  user: User
+  user: Shield
+};
+
+const tierColors = {
+  enterprise: "bg-purple-600",
+  professional: "bg-blue-600", 
+  premium: "bg-gold-600",
+  standard: "bg-green-600",
+  basic: "bg-gray-600"
 };
 
 const SystemSettings = () => {
@@ -65,12 +83,13 @@ const SystemSettings = () => {
   
   const [modules, setModules] = useState<SystemModule[]>([]);
   const [rolePermissions, setRolePermissions] = useState<RolePermission[]>([]);
+  const [roleLimits, setRoleLimits] = useState<Record<string, RoleLimits>>({});
   const [loading, setLoading] = useState(false);
   const [modulesLoading, setModulesLoading] = useState(true);
-  const { toast } = useToast();
 
   useEffect(() => {
     fetchModulesAndPermissions();
+    fetchRoleLimits();
   }, []);
 
   const fetchModulesAndPermissions = async () => {
@@ -94,13 +113,47 @@ const SystemSettings = () => {
       setRolePermissions(permissionsData || []);
     } catch (error) {
       console.error('Error fetching modules and permissions:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load module settings",
-        variant: "destructive",
-      });
+      toast.error('Failed to load module settings');
     } finally {
       setModulesLoading(false);
+    }
+  };
+
+  const fetchRoleLimits = async () => {
+    try {
+      const roles = ['admin', 'investment_professional', 'premium_user', 'standard_user', 'user'] as const
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role, max_portfolios, max_api_connections, max_requests_per_day, subscription_tier, features_enabled')
+        .in('role', roles)
+        .limit(1)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      const limitsMap: Record<string, RoleLimits> = {}
+      data?.forEach((item: any) => {
+        limitsMap[item.role] = item
+      })
+
+      // Set defaults for roles that don't exist yet
+      roles.forEach(role => {
+        if (!limitsMap[role]) {
+          limitsMap[role] = {
+            role,
+            max_portfolios: role === 'admin' ? -1 : 5,
+            max_api_connections: role === 'admin' ? -1 : 2,
+            max_requests_per_day: role === 'admin' ? -1 : 1000,
+            subscription_tier: 'basic',
+            features_enabled: {}
+          }
+        }
+      })
+
+      setRoleLimits(limitsMap)
+    } catch (error) {
+      console.error('Error fetching role limits:', error)
+      toast.error('Failed to fetch role limits')
     }
   };
 
@@ -118,16 +171,9 @@ const SystemSettings = () => {
       // For now, we'll just simulate the save
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast({
-        title: "Success",
-        description: "System settings have been saved",
-      });
+      toast.success("System settings have been saved");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save settings",
-        variant: "destructive",
-      });
+      toast.error("Failed to save settings");
     } finally {
       setLoading(false);
     }
@@ -157,17 +203,10 @@ const SystemSettings = () => {
         }
       });
 
-      toast({
-        title: "Success",
-        description: `Module access updated for ${roleLabels[role as keyof typeof roleLabels]}`,
-      });
+      toast.success(`Module access updated for ${roleLabels[role as keyof typeof roleLabels]}`);
     } catch (error) {
       console.error('Error updating role permission:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update module access",
-        variant: "destructive",
-      });
+      toast.error("Failed to update module access");
     }
   };
 
@@ -176,22 +215,40 @@ const SystemSettings = () => {
     return permission?.is_enabled ?? true; // Default to true if no explicit permission
   };
 
+  const updateRoleLimits = async (role: string, limits: Partial<RoleLimits>) => {
+    try {
+      const { error } = await supabase.rpc('update_role_limits', {
+        _role: role as any,
+        _max_portfolios: limits.max_portfolios,
+        _max_api_connections: limits.max_api_connections,
+        _max_requests_per_day: limits.max_requests_per_day,
+        _features_enabled: limits.features_enabled || {},
+        _subscription_tier: limits.subscription_tier || 'basic'
+      })
+
+      if (error) throw error
+
+      setRoleLimits(prev => ({
+        ...prev,
+        [role]: { ...prev[role], ...limits }
+      }))
+
+      toast.success(`Updated limits for ${roleLabels[role as keyof typeof roleLabels]}`)
+    } catch (error) {
+      console.error('Error updating role limits:', error)
+      toast.error('Failed to update role limits')
+    }
+  }
+
   const performBackup = async () => {
     setLoading(true);
     try {
       // Simulate backup process
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      toast({
-        title: "Success",
-        description: "Database backup completed successfully",
-      });
+      toast.success("Database backup completed successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Backup failed",
-        variant: "destructive",
-      });
+      toast.error("Backup failed");
     } finally {
       setLoading(false);
     }
@@ -216,11 +273,12 @@ const SystemSettings = () => {
           </div>
 
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="general">General Settings</TabsTrigger>
-              <TabsTrigger value="modules">Module Management</TabsTrigger>
-              <TabsTrigger value="database">Database Operations</TabsTrigger>
-            </TabsList>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="general">General Settings</TabsTrigger>
+            <TabsTrigger value="modules">Module Management</TabsTrigger>
+            <TabsTrigger value="roles">Role Configuration</TabsTrigger>
+            <TabsTrigger value="database">Database Operations</TabsTrigger>
+          </TabsList>
 
             <TabsContent value="general" className="space-y-6">
               {/* Platform Features */}
@@ -430,9 +488,125 @@ const SystemSettings = () => {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+          </TabsContent>
 
-            <TabsContent value="database" className="space-y-6">
+          <TabsContent value="roles" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Role Limits & Permissions
+                </CardTitle>
+                <CardDescription>
+                  Configure portfolio limits, API access, and feature permissions for each user role
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {Object.entries(roleLabels).map(([roleKey, roleLabel]) => {
+                  const Icon = roleIcons[roleKey as keyof typeof roleIcons]
+                  const limits = roleLimits[roleKey]
+                  
+                  if (!limits) return null
+
+                  return (
+                    <Card key={roleKey} className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <Icon className="w-6 h-6" />
+                          <div>
+                            <h3 className="text-lg font-semibold">{roleLabel}</h3>
+                            <Badge variant="outline" className={`${tierColors[limits.subscription_tier as keyof typeof tierColors]} text-white`}>
+                              {limits.subscription_tier?.toUpperCase()}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor={`${roleKey}-portfolios`}>Max Portfolios</Label>
+                          <Input
+                            id={`${roleKey}-portfolios`}
+                            type="number"
+                            value={limits.max_portfolios === -1 ? '' : limits.max_portfolios}
+                            placeholder="Unlimited"
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? -1 : parseInt(e.target.value)
+                              updateRoleLimits(roleKey, { max_portfolios: value })
+                            }}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            {limits.max_portfolios === -1 ? 'Unlimited' : `Maximum ${limits.max_portfolios} portfolios`}
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor={`${roleKey}-api`}>Max API Connections</Label>
+                          <Input
+                            id={`${roleKey}-api`}
+                            type="number"
+                            value={limits.max_api_connections === -1 ? '' : limits.max_api_connections}
+                            placeholder="Unlimited"
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? -1 : parseInt(e.target.value)
+                              updateRoleLimits(roleKey, { max_api_connections: value })
+                            }}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            {limits.max_api_connections === -1 ? 'Unlimited' : `Maximum ${limits.max_api_connections} connections`}
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor={`${roleKey}-requests`}>Daily API Requests</Label>
+                          <Input
+                            id={`${roleKey}-requests`}
+                            type="number"
+                            value={limits.max_requests_per_day === -1 ? '' : limits.max_requests_per_day}
+                            placeholder="Unlimited"
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? -1 : parseInt(e.target.value)
+                              updateRoleLimits(roleKey, { max_requests_per_day: value })
+                            }}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            {limits.max_requests_per_day === -1 ? 'Unlimited' : `${limits.max_requests_per_day.toLocaleString()} requests/day`}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 pt-4 border-t">
+                        <h4 className="font-medium mb-3">Feature Access</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {['advanced_analytics', 'ai_recommendations', 'risk_modeling', 'custom_reports'].map((feature) => (
+                            <div key={feature} className="flex items-center space-x-2">
+                              <Switch
+                                id={`${roleKey}-${feature}`}
+                                checked={limits.features_enabled?.[feature] || false}
+                                onCheckedChange={(checked) => {
+                                  updateRoleLimits(roleKey, {
+                                    features_enabled: {
+                                      ...limits.features_enabled,
+                                      [feature]: checked
+                                    }
+                                  })
+                                }}
+                              />
+                              <Label htmlFor={`${roleKey}-${feature}`} className="text-sm">
+                                {feature.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                              </Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
+                  )
+                })}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="database" className="space-y-6">
               {/* Database Operations */}
               <Card>
                 <CardHeader>

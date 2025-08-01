@@ -571,22 +571,37 @@ export type Database = {
       user_roles: {
         Row: {
           created_at: string
+          features_enabled: Json | null
           id: string
+          max_api_connections: number | null
+          max_portfolios: number | null
+          max_requests_per_day: number | null
           role: Database["public"]["Enums"]["app_role"]
+          subscription_tier: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          features_enabled?: Json | null
           id?: string
+          max_api_connections?: number | null
+          max_portfolios?: number | null
+          max_requests_per_day?: number | null
           role?: Database["public"]["Enums"]["app_role"]
+          subscription_tier?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          features_enabled?: Json | null
           id?: string
+          max_api_connections?: number | null
+          max_portfolios?: number | null
+          max_requests_per_day?: number | null
           role?: Database["public"]["Enums"]["app_role"]
+          subscription_tier?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -624,6 +639,17 @@ export type Database = {
           sort_order: number
         }[]
       }
+      get_user_role_limits: {
+        Args: { _user_id: string }
+        Returns: {
+          role: Database["public"]["Enums"]["app_role"]
+          max_portfolios: number
+          max_api_connections: number
+          max_requests_per_day: number
+          features_enabled: Json
+          subscription_tier: string
+        }[]
+      }
       get_user_statistics: {
         Args: { _user_id: string }
         Returns: Json
@@ -647,6 +673,17 @@ export type Database = {
         Args: {
           _user_email: string
           _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
+      update_role_limits: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _max_portfolios: number
+          _max_api_connections: number
+          _max_requests_per_day: number
+          _features_enabled?: Json
+          _subscription_tier?: string
         }
         Returns: boolean
       }

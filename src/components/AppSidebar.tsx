@@ -96,7 +96,7 @@ export function AppSidebar() {
                 <Wallet className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1">
-                <h2 className="font-semibold text-green-600">WealthFlow</h2>
+              <h2 className="font-semibold text-green-600">Medusa FinHub</h2>
                 <p className="text-xs text-green-600/60">Loading...</p>
               </div>
               <ProfileAvatar />
@@ -116,8 +116,8 @@ export function AppSidebar() {
               <Wallet className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
-              <h2 className="font-semibold text-green-600">WealthFlow</h2>
-              <p className="text-xs text-green-600/60">Wealth Management</p>
+              <h2 className="font-semibold text-green-600">Medusa FinHub</h2>
+              <p className="text-xs text-green-600/60">Investment Platform</p>
             </div>
             <ProfileAvatar />
           </div>
