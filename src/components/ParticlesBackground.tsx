@@ -26,6 +26,7 @@ export const ParticlesBackground = () => {
         position: {
           x: 50 + (Math.random() - 0.5) * 20,
           y: 50 + (Math.random() - 0.5) * 20,
+          mode: "percent"
         },
       })),
     []

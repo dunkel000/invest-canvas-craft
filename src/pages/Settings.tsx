@@ -1,6 +1,6 @@
 import { DashboardLayout } from "@/components/DashboardLayout"
 import ProtectedRoute from "@/components/ProtectedRoute"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ProfileSettings } from "@/components/ProfileSettings"
 
 const Settings = () => {
   return (
@@ -12,14 +12,7 @@ const Settings = () => {
             <p className="text-muted-foreground">Manage your account settings and preferences</p>
           </div>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Application Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Settings page coming soon...</p>
-            </CardContent>
-          </Card>
+          <ProfileSettings />
         </div>
       </DashboardLayout>
     </ProtectedRoute>
