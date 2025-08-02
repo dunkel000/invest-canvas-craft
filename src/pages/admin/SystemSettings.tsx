@@ -212,7 +212,29 @@ const SystemSettings = () => {
 
   const getPermissionForRole = (role: string, moduleId: string): boolean => {
     const permission = rolePermissions.find(p => p.role === role && p.module_id === moduleId);
-    return permission?.is_enabled ?? true; // Default to true if no explicit permission
+    
+    // If explicit permission is set, use it
+    if (permission) {
+      return permission.is_enabled;
+    }
+    
+    // Otherwise, use default role hierarchy logic
+    const module = modules.find(m => m.module_id === moduleId);
+    if (!module) return false;
+    
+    // Apply role hierarchy logic (same as in get_user_accessible_modules function)
+    switch (role) {
+      case 'admin':
+        return true; // Admins have access to all modules
+      case 'investment_professional':
+        return ['standard_user', 'premium_user', 'investment_professional', 'user'].includes(module.min_role);
+      case 'premium_user':
+        return ['standard_user', 'premium_user', 'user'].includes(module.min_role);
+      case 'standard_user':
+        return ['standard_user', 'user'].includes(module.min_role);
+      default:
+        return false;
+    }
   };
 
   const updateRoleLimits = async (role: string, limits: Partial<RoleLimits>) => {
