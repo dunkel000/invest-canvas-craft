@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TrendingUp, BarChart3, Zap, Shield, LogIn, GitBranch, Database, Brain, Target, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ParticlesBackground } from "@/components/ParticlesBackground";
+import { NoiseParticles } from "@/components/NoiseParticles";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { TickerTape } from "@/components/TickerTape";
 
@@ -67,6 +68,7 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="relative container mx-auto px-4 py-20 overflow-hidden">
         <ParticlesBackground />
+        <NoiseParticles />
         <div className="relative z-10 text-center space-y-8 max-w-6xl mx-auto">
           <div className="space-y-6">
             <h2 className="text-4xl md:text-7xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
