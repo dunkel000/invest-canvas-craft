@@ -109,7 +109,7 @@ const Auth = () => {
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Viper Finance
+              Medusa FinHub
             </h1>
           </div>
           <p className="text-muted-foreground">
