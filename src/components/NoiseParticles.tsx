@@ -21,32 +21,28 @@ export const NoiseParticles = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-      const particles: Particle[] = [];
-      const particleCount = 400;
+
+    const particles: Particle[] = [];
+    const particleCount = 300;
+
 
       const resizeCanvas = () => {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
       };
 
-      const createParticle = (): Particle => {
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const maxRadius = Math.min(canvas.width, canvas.height) * 0.2;
-        const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * maxRadius;
 
-        return {
-          x: centerX + Math.cos(angle) * radius,
-          y: centerY + Math.sin(angle) * radius,
-          vx: 0,
-          vy: 0,
-          size: Math.random() * 0.4 + 0.1,
-          opacity: Math.random() * 0.3 + 0.1,
-          life: 0,
-          maxLife: Math.random() * 300 + 200
-        };
-      };
+    const createParticle = (): Particle => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: 0,
+      vy: 0,
+      size: Math.random() * 1 + 0.3,
+      opacity: Math.random() * 0.3 + 0.1,
+      life: 0,
+      maxLife: Math.random() * 300 + 200
+    });
+
 
     const initParticles = () => {
       particles.length = 0;

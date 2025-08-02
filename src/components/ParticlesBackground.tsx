@@ -57,7 +57,50 @@ export const ParticlesBackground = () => {
   return (
     <Particles
       id="tsparticles"
-      options={options}
+
+      options={{
+        background: {
+          color: {
+            value: "transparent",
+          },
+        },
+        fpsLimit: 120,
+        interactivity: {
+          events: {
+            resize: {
+              enable: true,
+            },
+          },
+        },
+        particles: {
+          color: {
+            value: ["#10b981", "#059669", "#047857"],
+          },
+          links: {
+            enable: false,
+          },
+          move: {
+            enable: false,
+          },
+          number: {
+            density: {
+              enable: true,
+            },
+            value: 200,
+          },
+          opacity: {
+            value: 0.8,
+          },
+          shape: {
+            type: "circle",
+          },
+          size: {
+            value: { min: 0.5, max: 2 },
+          },
+        },
+        detectRetina: true,
+      }}
+
       className="absolute inset-0 w-full h-full"
     />
   );
