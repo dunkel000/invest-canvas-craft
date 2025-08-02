@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/hooks/useAuth"
 import { supabase } from "@/integrations/supabase/client"
 import { Upload, Save } from "lucide-react"
+import { ImageCropper } from "./ImageCropper"
 
 interface Profile {
   id: string
@@ -23,6 +24,9 @@ export function ProfileSettings() {
   const [displayName, setDisplayName] = useState("")
   const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [cropperOpen, setCropperOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string>("")
+  const [selectedFileName, setSelectedFileName] = useState<string>("")
   
   useEffect(() => {
     if (user?.id) {
@@ -45,21 +49,57 @@ export function ProfileSettings() {
     }
   }
 
-  const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      setUploading(true)
-      
       if (!event.target.files || event.target.files.length === 0) {
-        throw new Error('You must select an image to upload.')
+        return
       }
 
       const file = event.target.files[0]
-      const fileExt = file.name.split('.').pop()
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Error",
+          description: "Please select a valid image file.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "Error", 
+          description: "File size must be less than 5MB.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const imageUrl = URL.createObjectURL(file)
+      setSelectedImage(imageUrl)
+      setSelectedFileName(file.name)
+      setCropperOpen(true)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error selecting file.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const uploadCroppedAvatar = async (croppedImageBlob: Blob) => {
+    try {
+      setUploading(true)
+      
+      const fileExt = selectedFileName.split('.').pop() || 'jpg'
       const filePath = `${user?.id}/avatar.${fileExt}`
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true })
+        .upload(filePath, croppedImageBlob, { upsert: true })
 
       if (uploadError) {
         throw uploadError
@@ -94,6 +134,12 @@ export function ProfileSettings() {
       })
     } finally {
       setUploading(false)
+      // Clean up
+      if (selectedImage) {
+        URL.revokeObjectURL(selectedImage)
+        setSelectedImage("")
+        setSelectedFileName("")
+      }
     }
   }
 
@@ -169,7 +215,7 @@ export function ProfileSettings() {
                 id="avatar-upload"
                 type="file"
                 accept="image/*"
-                onChange={uploadAvatar}
+                onChange={handleFileSelect}
                 className="hidden"
               />
               <p className="text-xs text-muted-foreground mt-2">
@@ -214,6 +260,21 @@ export function ProfileSettings() {
           </Button>
         </CardContent>
       </Card>
+
+      <ImageCropper
+        isOpen={cropperOpen}
+        onClose={() => {
+          setCropperOpen(false)
+          if (selectedImage) {
+            URL.revokeObjectURL(selectedImage)
+            setSelectedImage("")
+            setSelectedFileName("")
+          }
+        }}
+        imageSrc={selectedImage}
+        onCropComplete={uploadCroppedAvatar}
+        fileName={selectedFileName}
+      />
     </div>
   )
 }
