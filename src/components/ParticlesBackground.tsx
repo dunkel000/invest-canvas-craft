@@ -27,25 +27,8 @@ export const ParticlesBackground = () => {
         fpsLimit: 120,
         interactivity: {
           events: {
-            onClick: {
-              enable: true,
-              mode: "push",
-            },
-            onHover: {
-              enable: true,
-              mode: "repulse",
-            },
             resize: {
-              enable: true
-            },
-          },
-          modes: {
-            push: {
-              quantity: 4,
-            },
-            repulse: {
-              distance: 200,
-              duration: 0.4,
+              enable: true,
             },
           },
         },
@@ -54,36 +37,25 @@ export const ParticlesBackground = () => {
             value: ["#10b981", "#059669", "#047857"],
           },
           links: {
-            color: "#10b981",
-            distance: 150,
-            enable: true,
-            opacity: 0.3,
-            width: 1,
+            enable: false,
           },
           move: {
-            direction: "none",
-            enable: true,
-            outModes: {
-              default: "bounce",
-            },
-            random: false,
-            speed: 2,
-            straight: false,
+            enable: false,
           },
           number: {
             density: {
               enable: true,
             },
-            value: 80,
+            value: 200,
           },
           opacity: {
-            value: 0.5,
+            value: 0.8,
           },
           shape: {
             type: "circle",
           },
           size: {
-            value: { min: 1, max: 5 },
+            value: { min: 0.5, max: 2 },
           },
         },
         detectRetina: true,
