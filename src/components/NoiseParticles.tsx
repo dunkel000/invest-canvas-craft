@@ -23,7 +23,7 @@ export const NoiseParticles = () => {
 
 
     const particles: Particle[] = [];
-    const particleCount = 300;
+    const particleCount = 100;
 
 
       const resizeCanvas = () => {
@@ -35,9 +35,9 @@ export const NoiseParticles = () => {
     const createParticle = (): Particle => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: 0,
-      vy: 0,
-      size: Math.random() * 1 + 0.3,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      size: Math.random() * 2 + 0.5,
       opacity: Math.random() * 0.3 + 0.1,
       life: 0,
       maxLife: Math.random() * 300 + 200
@@ -54,12 +54,12 @@ export const NoiseParticles = () => {
     const updateParticles = () => {
       particles.forEach((particle, index) => {
         // Add noise to movement
-        particle.vx += (Math.random() - 0.5) * 0.01;
-        particle.vy += (Math.random() - 0.5) * 0.01;
+        particle.vx += (Math.random() - 0.5) * 0.02;
+        particle.vy += (Math.random() - 0.5) * 0.02;
         
         // Apply velocity damping
-        particle.vx *= 0.99;
-        particle.vy *= 0.99;
+        particle.vx *= 0.995;
+        particle.vy *= 0.995;
         
         // Update position
         particle.x += particle.vx;
