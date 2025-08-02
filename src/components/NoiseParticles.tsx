@@ -35,8 +35,8 @@ export const NoiseParticles = () => {
     const createParticle = (): Particle => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: 0,
-      vy: 0,
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
       size: Math.random() * 1 + 0.3,
       opacity: Math.random() * 0.3 + 0.1,
       life: 0,
@@ -53,43 +53,36 @@ export const NoiseParticles = () => {
 
     const updateParticles = () => {
       particles.forEach((particle, index) => {
-        // Add noise to movement
+        // Slightly vary velocity for a subtle drifting motion
         particle.vx += (Math.random() - 0.5) * 0.01;
         particle.vy += (Math.random() - 0.5) * 0.01;
-        
+
         // Apply velocity damping
         particle.vx *= 0.99;
         particle.vy *= 0.99;
-        
+
         // Update position
         particle.x += particle.vx;
         particle.y += particle.vy;
-        
+
         // Update life
         particle.life++;
-        
+
         // Fade in/out based on life
         if (particle.life < particle.maxLife * 0.1) {
           particle.opacity = (particle.life / (particle.maxLife * 0.1)) * 0.3;
         } else if (particle.life > particle.maxLife * 0.9) {
           particle.opacity = ((particle.maxLife - particle.life) / (particle.maxLife * 0.1)) * 0.3;
         }
-        
-          // Keep particles within central cluster
-          const centerX = canvas.width / 2;
-          const centerY = canvas.height / 2;
-          const maxRadius = Math.min(canvas.width, canvas.height) * 0.2;
-          const dx = particle.x - centerX;
-          const dy = particle.y - centerY;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance > maxRadius) {
-            const ratio = maxRadius / distance;
-            particle.x = centerX + dx * ratio;
-            particle.y = centerY + dy * ratio;
-          }
-        
-        // Reset particle if life exceeded
-        if (particle.life >= particle.maxLife) {
+
+        // Respawn particles that move out of bounds or exceed life
+        if (
+          particle.x < 0 ||
+          particle.x > canvas.width ||
+          particle.y < 0 ||
+          particle.y > canvas.height ||
+          particle.life >= particle.maxLife
+        ) {
           particles[index] = createParticle();
         }
       });
