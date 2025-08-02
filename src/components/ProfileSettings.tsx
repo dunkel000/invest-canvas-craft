@@ -57,21 +57,23 @@ export function ProfileSettings() {
 
       const file = event.target.files[0]
       
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
+      // Validate file type - only allow JPG, PNG, GIF
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+      if (!allowedTypes.includes(file.type.toLowerCase())) {
         toast({
-          title: "Error",
-          description: "Please select a valid image file.",
+          title: "Invalid file type",
+          description: "Please select a JPG, PNG, or GIF image.",
           variant: "destructive",
         })
         return
       }
 
-      // Validate file size (5MB)
-      if (file.size > 5 * 1024 * 1024) {
+      // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+      const maxSize = 5 * 1024 * 1024
+      if (file.size > maxSize) {
         toast({
-          title: "Error", 
-          description: "File size must be less than 5MB.",
+          title: "File too large", 
+          description: "Image must be smaller than 5MB. Please choose a smaller file.",
           variant: "destructive",
         })
         return
@@ -87,6 +89,9 @@ export function ProfileSettings() {
         description: "Error selecting file.",
         variant: "destructive",
       })
+    } finally {
+      // Reset the input value so the same file can be selected again
+      event.target.value = ''
     }
   }
 
@@ -109,7 +114,8 @@ export function ProfileSettings() {
         .from('avatars')
         .getPublicUrl(filePath)
 
-      const avatarUrl = data.publicUrl
+      // Add timestamp to force cache invalidation
+      const avatarUrl = `${data.publicUrl}?t=${Date.now()}`
 
       const { error: updateError } = await supabase
         .from('profiles')
@@ -120,7 +126,8 @@ export function ProfileSettings() {
         throw updateError
       }
 
-      setProfile(prev => prev ? { ...prev, avatar_url: avatarUrl } : null)
+      // Force refresh the profile data
+      await fetchProfile()
       
       toast({
         title: "Success",
@@ -219,7 +226,7 @@ export function ProfileSettings() {
                 className="hidden"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                JPG, PNG, or GIF. Max 5MB.
+                JPG, PNG, or GIF. Maximum 5MB.
               </p>
             </div>
           </div>
