@@ -21,13 +21,16 @@ export const NoiseParticles = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+
     const particles: Particle[] = [];
     const particleCount = 300;
 
-    const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
+
+      const resizeCanvas = () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      };
+
 
     const createParticle = (): Particle => ({
       x: Math.random() * canvas.width,
@@ -39,6 +42,7 @@ export const NoiseParticles = () => {
       life: 0,
       maxLife: Math.random() * 300 + 200
     });
+
 
     const initParticles = () => {
       particles.length = 0;
@@ -71,11 +75,18 @@ export const NoiseParticles = () => {
           particle.opacity = ((particle.maxLife - particle.life) / (particle.maxLife * 0.1)) * 0.3;
         }
         
-        // Wrap around edges
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
+          // Keep particles within central cluster
+          const centerX = canvas.width / 2;
+          const centerY = canvas.height / 2;
+          const maxRadius = Math.min(canvas.width, canvas.height) * 0.2;
+          const dx = particle.x - centerX;
+          const dy = particle.y - centerY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance > maxRadius) {
+            const ratio = maxRadius / distance;
+            particle.x = centerX + dx * ratio;
+            particle.y = centerY + dy * ratio;
+          }
         
         // Reset particle if life exceeded
         if (particle.life >= particle.maxLife) {
