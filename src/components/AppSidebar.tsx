@@ -35,7 +35,7 @@ export function AppSidebar() {
   const [adminOpen, setAdminOpen] = useState(true)
   const [wealthOpen, setWealthOpen] = useState(true)
   const [portfoliosOpen, setPortfoliosOpen] = useState(true)
-  const [toolsOpen, setToolsOpen] = useState(false)
+  const [toolsOpen, setToolsOpen] = useState(true)
 
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path)
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
