@@ -1,8 +1,8 @@
 import { DashboardLayout } from "@/components/DashboardLayout"
-import { AssetComposer as AssetComposerComponent } from "@/components/FlowDesigner"
+import { AssetComposer as AssetComposerComponent } from "@/components/AssetComposer"
 import ProtectedRoute from "@/components/ProtectedRoute"
 
-const AssetComposer = () => {
+const AssetComposerPage = () => {
   return (
     <ProtectedRoute>
       <DashboardLayout>
@@ -19,4 +19,4 @@ const AssetComposer = () => {
   );
 };
 
-export default AssetComposer;
+export default AssetComposerPage;

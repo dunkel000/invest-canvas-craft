@@ -4,11 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
-import Landing from "./pages/Landing";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import Assets from "./pages/Assets";
-import FlowDesigner from "./pages/FlowDesigner";
+import AssetComposer from "./pages/AssetComposer";
 import ApiConnections from "./pages/ApiConnections";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
@@ -24,7 +23,7 @@ import FinancialGoals from "./pages/wealth/FinancialGoals";
 // Portfolio Pages
 import PersonalPortfolio from "./pages/portfolios/PersonalPortfolio";
 import ApiSyncedPortfolios from "./pages/portfolios/ApiSyncedPortfolios";
-import ManualPortfolios from "./pages/portfolios/ManualPortfolios";
+import InvestmentTemplates from "./pages/portfolios/InvestmentTemplates";
 import ClientPortfolios from "./pages/portfolios/ClientPortfolios";
 
 // Admin Pages
@@ -45,7 +44,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Navigate to="/wealth/all-portfolios" replace />} />
               
               {/* Wealth Management Routes */}
@@ -57,7 +56,7 @@ const App = () => (
               {/* Portfolio Routes */}
               <Route path="/portfolios/personal" element={<PersonalPortfolio />} />
               <Route path="/portfolios/api-synced" element={<ApiSyncedPortfolios />} />
-              <Route path="/portfolios/manual" element={<ManualPortfolios />} />
+              <Route path="/portfolios/investment-templates" element={<InvestmentTemplates />} />
               <Route path="/portfolios/clients" element={<ClientPortfolios />} />
               
               {/* Admin Routes */}
@@ -72,7 +71,7 @@ const App = () => (
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/asset-types" element={<Assets />} />
               <Route path="/assets" element={<Assets />} />
-              <Route path="/asset-composer" element={<FlowDesigner />} />
+              <Route path="/asset-composer" element={<AssetComposer />} />
               <Route path="/api-connections" element={<ApiConnections />} />
               <Route path="/analytics" element={<div>Analytics coming soon</div>} />
               <Route path="/settings" element={<Settings />} />
