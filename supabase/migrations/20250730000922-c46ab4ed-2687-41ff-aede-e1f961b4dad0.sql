@@ -202,13 +202,13 @@ INSERT INTO public.system_modules (module_id, name, path, icon, category, descri
 
 -- Portfolio modules
 ('personal_portfolio', 'Personal Portfolio', '/portfolios/personal', 'User', 'portfolios', 'Manage personal investments', 'standard_user', 30),
-('manual_portfolios', 'Manual Portfolios', '/portfolios/manual', 'Edit', 'portfolios', 'Manually managed portfolios', 'standard_user', 31),
+('investment_templates', 'Investment Templates', '/portfolios/investment-templates', 'Edit', 'portfolios', 'Manually managed portfolios', 'standard_user', 31),
 ('api_synced_portfolios', 'API Synced Portfolios', '/portfolios/api-synced', 'RefreshCw', 'portfolios', 'Automatically synced portfolios', 'premium_user', 32),
 ('client_portfolios', 'Client Portfolios', '/portfolios/clients', 'Briefcase', 'portfolios', 'Manage client portfolios', 'investment_professional', 33),
 
 -- Tools modules
 ('assets', 'Assets', '/assets', 'Coins', 'tools', 'Asset management and universe', 'standard_user', 40),
-('flow_designer', 'Flow Designer', '/flow-designer', 'Workflow', 'tools', 'Design financial workflows', 'premium_user', 41),
+ ('asset_composer', 'Asset Composer', '/asset-composer', 'Workflow', 'tools', 'Design financial workflows', 'premium_user', 41),
 ('api_connections', 'API Connections', '/api-connections', 'Plug', 'tools', 'Manage external API connections', 'premium_user', 42),
 ('discover', 'Discover', '/discover', 'Search', 'tools', 'Discover new assets and opportunities', 'standard_user', 43),
 
