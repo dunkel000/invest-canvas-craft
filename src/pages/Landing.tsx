@@ -6,6 +6,7 @@ import { ParticlesBackground } from "@/components/ParticlesBackground";
 import { NoiseParticles } from "@/components/NoiseParticles";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { TickerTape } from "@/components/TickerTape";
+import { GlowingCircles } from "@/components/GlowingCircles";
 
 const Landing = () => {
   const features = [
@@ -99,6 +100,19 @@ const Landing = () => {
               <Zap className="w-5 h-5 mr-2" />
               Watch Demo
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Glowing Circles Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="relative flex items-center justify-center">
+          <GlowingCircles />
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4">
+            <h3 className="text-3xl font-bold">Illuminate Your Strategy</h3>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Add your custom message or call to action here.
+            </p>
           </div>
         </div>
       </section>
