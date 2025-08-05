@@ -54,6 +54,8 @@ const App = () => (
 
               {/* Portfolio Routes */}
               <Route path="/portfolios/all" element={<AllPortfolios />} />
+              <Route path="/portfolios/personal" element={<CustomPortfolio />} />
+              <Route path="/portfolios/manual" element={<CustomPortfolio />} />
               <Route path="/portfolios/custom" element={<CustomPortfolio />} />
               <Route path="/portfolios/api-synced" element={<ApiSyncedPortfolios />} />
               <Route path="/portfolios/investment-templates" element={<InvestmentTemplates />} />
