@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import { useNavigate } from "react-router-dom"
+import { useAssetUniverse } from "@/hooks/useAssetUniverse"
 
 type AssetType = "stock" | "crypto" | "bond" | "etf" | "real_estate" | "commodity" | "other"
 type RiskCategory = "low" | "medium" | "high" | "very_high"
@@ -40,11 +41,14 @@ interface ApiConnection {
 }
 
 const Assets = () => {
+  const { assets: universeAssets, loading: universeLoading, populateYahooAssets, getSourceDisplayName } = useAssetUniverse()
   const [assets, setAssets] = useState<Asset[]>([])
   const [apiConnections, setApiConnections] = useState<ApiConnection[]>([])
   const [loading, setLoading] = useState(true)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [importDialogOpen, setImportDialogOpen] = useState(false)
+  const [sourceFilter, setSourceFilter] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
   const navigate = useNavigate()
 
   const [newAsset, setNewAsset] = useState({
@@ -479,8 +483,118 @@ const Assets = () => {
             </div>
           </div>
 
-          {/* Assets Grid */}
-          <div className="grid gap-4">
+          {/* Yahoo Finance Integration */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    Asset Universe
+                    <Badge variant="outline">Yahoo Finance Enabled</Badge>
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Your personal database of all available assets from various sources
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    toast.promise(populateYahooAssets(), {
+                      loading: "Fetching Yahoo Finance data...",
+                      success: "Yahoo Finance assets populated!",
+                      error: "Failed to populate assets"
+                    });
+                  }}
+                >
+                  Populate Yahoo Assets
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Search and Filter Controls */}
+              <div className="flex gap-4 mb-4">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Search assets by symbol or name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Select value={sourceFilter} onValueChange={setSourceFilter}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Filter by source" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Sources</SelectItem>
+                    <SelectItem value="yahoo_finance">Yahoo Finance</SelectItem>
+                    <SelectItem value="manual">Custom</SelectItem>
+                    <SelectItem value="node_created">Node Created</SelectItem>
+                    <SelectItem value="api">API Import</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Legal Disclaimer for Yahoo Finance */}
+              <div className="mb-4 p-3 bg-accent/50 rounded-lg">
+                <p className="text-xs text-muted-foreground">
+                  <strong>Data Attribution:</strong> Financial data provided by Yahoo Finance. 
+                  Data may be delayed and should not be relied upon for real-time trading decisions. 
+                  Please verify all data independently before making investment decisions.
+                </p>
+              </div>
+
+              {/* Asset Universe Grid */}
+              <div className="grid gap-2 max-h-96 overflow-y-auto">
+                {universeLoading ? (
+                  <div className="text-center py-8">Loading asset universe...</div>
+                ) : (
+                  universeAssets
+                    .filter(asset => {
+                      const matchesSearch = !searchTerm || 
+                        asset.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        asset.name.toLowerCase().includes(searchTerm.toLowerCase());
+                      const matchesSource = sourceFilter === 'all' || asset.source === sourceFilter;
+                      return matchesSearch && matchesSource;
+                    })
+                    .slice(0, 100) // Limit to first 100 for performance
+                    .map((asset) => (
+                      <div 
+                        key={asset.id}
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{asset.symbol}</span>
+                            <span className="text-sm text-muted-foreground truncate">{asset.name}</span>
+                            <Badge variant="outline" className="text-xs">
+                              {getSourceDisplayName(asset.source)}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>{asset.asset_type}</span>
+                            {asset.sector && <span>{asset.sector}</span>}
+                            {asset.exchange && <span>{asset.exchange}</span>}
+                            {asset.current_price && (
+                              <span>${asset.current_price.toFixed(2)}</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">
+                            {getSourceDisplayName(asset.source)}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* User Assets Grid */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Your Portfolio Assets</h3>
+            <div className="grid gap-4">
             {assets.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
@@ -557,6 +671,7 @@ const Assets = () => {
                 </Card>
               ))
             )}
+            </div>
           </div>
         </div>
       </DashboardLayout>

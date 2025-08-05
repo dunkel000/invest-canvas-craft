@@ -18,7 +18,7 @@ interface AssetPickerProps {
 
 export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
   const { user } = useAuth();
-  const { assets: universeAssets, loading, fetchAssets } = useAssetUniverse();
+  const { assets: universeAssets, loading, fetchAssets, populateYahooAssets, getSourceDisplayName } = useAssetUniverse();
   const { portfolioAssets, refreshAssets } = usePortfolios();
   
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -150,6 +150,28 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
                     <DialogTitle>Add Assets from Universe</DialogTitle>
                   </DialogHeader>
                   
+                  {/* Yahoo Finance Populate Button */}
+                  <div className="flex items-center justify-between mb-4 p-4 bg-accent/50 rounded-lg">
+                    <div>
+                      <h4 className="font-medium">Yahoo Finance Assets</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Populate with real-time stock data from Yahoo Finance
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={async () => {
+                        toast.promise(populateYahooAssets(), {
+                          loading: "Fetching Yahoo Finance data...",
+                          success: "Yahoo Finance assets populated!",
+                          error: "Failed to populate assets"
+                        });
+                      }}
+                    >
+                      Populate Yahoo Assets
+                    </Button>
+                  </div>
+
                   {/* Search and Filters */}
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                     <div className="relative">
@@ -190,7 +212,7 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
                       <SelectContent>
                         <SelectItem value="all">All Sources</SelectItem>
                         {uniqueSources.map(source => (
-                          <SelectItem key={source} value={source}>{source}</SelectItem>
+                          <SelectItem key={source} value={source}>{getSourceDisplayName(source)}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -227,7 +249,7 @@ export const AssetPicker = ({ portfolioId }: AssetPickerProps) => {
                                 <span className="font-medium">{asset.symbol}</span>
                                 <span className="text-sm text-muted-foreground">{asset.name}</span>
                                 <Badge variant="outline" className="text-xs">
-                                  {asset.source}
+                                  {getSourceDisplayName(asset.source)}
                                 </Badge>
                               </div>
                               <div className="flex items-center gap-4 text-xs text-muted-foreground">

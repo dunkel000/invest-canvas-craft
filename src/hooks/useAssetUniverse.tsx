@@ -105,6 +105,33 @@ export const useAssetUniverse = () => {
     }
   };
 
+  const populateYahooAssets = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('populate-yahoo-assets');
+      if (error) throw error;
+      
+      // Refresh the assets list after population
+      await fetchAssets();
+      return data;
+    } catch (error) {
+      console.error('Error populating Yahoo Finance assets:', error);
+      return null;
+    }
+  };
+
+  const getSourceDisplayName = (source: string) => {
+    const sourceMap: Record<string, string> = {
+      'yahoo_finance': 'Yahoo Finance',
+      'manual': 'Custom',
+      'node_created': 'Node Created',
+      'api': 'API Import',
+      'default': 'System'
+    };
+    return sourceMap[source] || source;
+  };
+
   useEffect(() => {
     if (user) {
       fetchAssets();
@@ -116,5 +143,7 @@ export const useAssetUniverse = () => {
     loading,
     fetchAssets,
     addAssetToUniverse,
+    populateYahooAssets,
+    getSourceDisplayName,
   };
 };

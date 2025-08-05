@@ -1,1 +1,24 @@
 project_id = "gxcnoostsfjylryzkzzb"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+password_min_length = 6
+external_email_enabled = true
+external_phone_enabled = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+[functions.fetch-sp500]
+verify_jwt = false
+
+[functions.populate-yahoo-assets]
+verify_jwt = true
+
+[storage]
+enabled = true
