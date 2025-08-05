@@ -32,7 +32,7 @@ const Landing = () => {
     {
       icon: GitBranch,
       title: "Workflow Automation",
-      description: "Visual flow designer for automated trading strategies and rebalancing."
+      description: "Visual asset composer for automated trading strategies and rebalancing."
     },
     {
       icon: Database,

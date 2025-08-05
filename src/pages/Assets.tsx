@@ -297,7 +297,7 @@ const Assets = () => {
     }
   }
 
-  const editInFlow = (assetId: string) => {
+  const editInAssetComposer = (assetId: string) => {
     navigate(`/asset-composer?asset=${assetId}`)
   }
 
@@ -532,10 +532,10 @@ const Assets = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => editInFlow(asset.id)}
+                        onClick={() => editInAssetComposer(asset.id)}
                       >
                         <GitBranch className="w-4 h-4 mr-2" />
-                        Edit in Flow
+                        Edit in Asset Composer
                       </Button>
                       
                       <Button
