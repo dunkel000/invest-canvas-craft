@@ -2,7 +2,7 @@ import { DashboardLayout } from "@/components/DashboardLayout"
 import { PortfolioManager } from "@/components/PortfolioManager"
 import ProtectedRoute from "@/components/ProtectedRoute"
 
-const PersonalPortfolio = () => {
+const CustomPortfolio = () => {
   return (
     <ProtectedRoute>
       <DashboardLayout>
@@ -12,4 +12,4 @@ const PersonalPortfolio = () => {
   );
 };
 
-export default PersonalPortfolio;
+export default CustomPortfolio;
