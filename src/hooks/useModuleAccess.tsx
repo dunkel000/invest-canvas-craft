@@ -39,7 +39,13 @@ export const useModuleAccess = () => {
         return;
       }
 
-      setModules(data || []);
+      const transformedData = (data || []).map((module: SystemModule) =>
+        module.module_id === 'flow_designer'
+          ? { ...module, name: 'Asset Composer', path: '/asset-composer', icon: 'Workflow' }
+          : module
+      );
+
+      setModules(transformedData);
     } catch (error) {
       console.error('Error fetching user modules:', error);
     } finally {
