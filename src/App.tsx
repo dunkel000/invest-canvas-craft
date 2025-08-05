@@ -54,12 +54,16 @@ const App = () => (
 
               {/* Portfolio Routes */}
               <Route path="/portfolios/all" element={<AllPortfolios />} />
-              <Route path="/portfolios/personal" element={<CustomPortfolio />} />
-              <Route path="/portfolios/manual" element={<CustomPortfolio />} />
               <Route path="/portfolios/custom" element={<CustomPortfolio />} />
               <Route path="/portfolios/investment-templates" element={<InvestmentTemplates />} />
               <Route path="/portfolios/api-synced" element={<ApiSyncedPortfolios />} />
               <Route path="/portfolios/clients" element={<ClientPortfolios />} />
+              <Route path="/portfolios/assets" element={<Assets />} />
+              <Route path="/portfolios/asset-composer" element={<AssetComposer />} />
+              
+              {/* Legacy Routes - keep for backward compatibility */}
+              <Route path="/portfolios/personal" element={<Navigate to="/portfolios/custom" replace />} />
+              <Route path="/portfolios/manual" element={<Navigate to="/portfolios/investment-templates" replace />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminDashboard />} />
