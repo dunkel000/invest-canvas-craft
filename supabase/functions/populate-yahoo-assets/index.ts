@@ -132,7 +132,7 @@ serve(async (req) => {
     const { data, error } = await supabase
       .from('asset_universe')
       .upsert(validStockData, { 
-        onConflict: 'symbol,source',
+        onConflict: 'symbol, source',
         ignoreDuplicates: false 
       })
       .select();
