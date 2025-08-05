@@ -195,13 +195,13 @@ INSERT INTO public.system_modules (module_id, name, path, icon, category, descri
 ('dashboard', 'Dashboard', '/', 'LayoutDashboard', 'main', 'Main dashboard overview', 'standard_user', 10),
 
 -- Wealth management modules
-('all_portfolios', 'All Portfolios', '/wealth/all-portfolios', 'Briefcase', 'wealth', 'View all portfolio summaries', 'standard_user', 20),
 ('financial_goals', 'Financial Goals', '/wealth/financial-goals', 'Target', 'wealth', 'Set and track financial goals', 'standard_user', 21),
 ('liquidity_planning', 'Liquidity Planning', '/wealth/liquidity-planning', 'Droplets', 'wealth', 'Plan cash flow and liquidity', 'premium_user', 22),
 ('tax_planning', 'Tax Planning', '/wealth/tax-planning', 'Calculator', 'wealth', 'Tax optimization strategies', 'premium_user', 23),
 
 -- Portfolio modules
-('personal_portfolio', 'Personal Portfolio', '/portfolios/personal', 'User', 'portfolios', 'Manage personal investments', 'standard_user', 30),
+('all_portfolios', 'All Portfolios', '/portfolios/all', 'Briefcase', 'portfolios', 'View all portfolio summaries', 'standard_user', 20),
+('personal_portfolio', 'Custom Portfolio', '/portfolios/custom', 'User', 'portfolios', 'Manage personal investments', 'standard_user', 30),
 ('investment_templates', 'Investment Templates', '/portfolios/investment-templates', 'Edit', 'portfolios', 'Manually managed portfolios', 'standard_user', 31),
 ('api_synced_portfolios', 'API Synced Portfolios', '/portfolios/api-synced', 'RefreshCw', 'portfolios', 'Automatically synced portfolios', 'premium_user', 32),
 ('client_portfolios', 'Client Portfolios', '/portfolios/clients', 'Briefcase', 'portfolios', 'Manage client portfolios', 'investment_professional', 33),

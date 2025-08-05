@@ -15,13 +15,13 @@ import NotFound from "./pages/NotFound";
 import Discover from "./pages/Discover";
 
 // Wealth Management Pages
-import AllPortfolios from "./pages/wealth/AllPortfolios";
 import TaxPlanning from "./pages/wealth/TaxPlanning";
 import LiquidityPlanning from "./pages/wealth/LiquidityPlanning";
 import FinancialGoals from "./pages/wealth/FinancialGoals";
 
 // Portfolio Pages
-import PersonalPortfolio from "./pages/portfolios/PersonalPortfolio";
+import AllPortfolios from "./pages/portfolios/AllPortfolios";
+import CustomPortfolio from "./pages/portfolios/CustomPortfolio";
 import ApiSyncedPortfolios from "./pages/portfolios/ApiSyncedPortfolios";
 import InvestmentTemplates from "./pages/portfolios/InvestmentTemplates";
 import ClientPortfolios from "./pages/portfolios/ClientPortfolios";
@@ -45,16 +45,16 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/dashboard" element={<Navigate to="/wealth/all-portfolios" replace />} />
-              
+              <Route path="/dashboard" element={<Navigate to="/portfolios/all" replace />} />
+
               {/* Wealth Management Routes */}
-              <Route path="/wealth/all-portfolios" element={<AllPortfolios />} />
               <Route path="/wealth/tax-planning" element={<TaxPlanning />} />
               <Route path="/wealth/liquidity-planning" element={<LiquidityPlanning />} />
               <Route path="/wealth/financial-goals" element={<FinancialGoals />} />
-              
+
               {/* Portfolio Routes */}
-              <Route path="/portfolios/personal" element={<PersonalPortfolio />} />
+              <Route path="/portfolios/all" element={<AllPortfolios />} />
+              <Route path="/portfolios/custom" element={<CustomPortfolio />} />
               <Route path="/portfolios/api-synced" element={<ApiSyncedPortfolios />} />
               <Route path="/portfolios/investment-templates" element={<InvestmentTemplates />} />
               <Route path="/portfolios/clients" element={<ClientPortfolios />} />
