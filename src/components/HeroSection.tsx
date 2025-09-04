@@ -21,10 +21,10 @@ export const HeroSection = ({ title, subtitle, variant = 'default' }: HeroSectio
       {/* Moving particles */}
       <div className="absolute inset-0">
         {isRadial ? (
-          // Radial particles moving from center outwards
-          [...Array(100)].map((_, i) => {
-            const angle = (i / 100) * 360;
-            const distance = 20 + (i % 4) * 15;
+          // Radial particles moving from center outwards - star cruising simulation
+          [...Array(150)].map((_, i) => {
+            const angle = (i / 150) * 360;
+            const distance = 200 + (i % 5) * 100; // Much larger distance to cover whole header
             
             return (
               <div
@@ -33,16 +33,16 @@ export const HeroSection = ({ title, subtitle, variant = 'default' }: HeroSectio
                 style={{
                   left: '50%',
                   top: '50%',
-                  animationDelay: `${Math.random() * 4}s`,
-                  animationDuration: `${8 + Math.random() * 6}s`,
+                  animationDelay: `${Math.random() * 6}s`,
+                  animationDuration: `${12 + Math.random() * 8}s`, // Slower for cruising effect
                   '--angle': `${angle}deg`,
                   '--distance': `${distance}px`
                 } as React.CSSProperties & { '--angle': string; '--distance': string }}
               >
                 <div 
-                  className="w-0.5 h-0.5 bg-primary rounded-full opacity-40"
+                  className="w-0.5 h-0.5 bg-primary rounded-full opacity-30"
                   style={{
-                    boxShadow: '0 0 4px hsl(var(--primary))'
+                    boxShadow: '0 0 2px hsl(var(--primary))'
                   }}
                 ></div>
               </div>
