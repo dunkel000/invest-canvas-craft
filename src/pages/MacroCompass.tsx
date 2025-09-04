@@ -8,6 +8,10 @@ import { AdvancedChart } from "@/components/MacroCompass/AdvancedChart";
 import { MarketHeatmap } from "@/components/MacroCompass/MarketHeatmap";
 import { EconomicIndicator } from "@/components/MacroCompass/EconomicIndicator";
 import { RealTimeNewsFeed } from "@/components/MacroCompass/RealTimeNewsFeed";
+import { CorrelationMatrix } from "@/components/MacroCompass/CorrelationMatrix";
+import { RiskMetrics } from "@/components/MacroCompass/RiskMetrics";
+import { EconomicCalendar } from "@/components/MacroCompass/EconomicCalendar";
+import { SentimentAnalysis } from "@/components/MacroCompass/SentimentAnalysis";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Treemap, Cell } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { TrendingUp, TrendingDown, DollarSign, Globe, AlertTriangle, Activity, BarChart3, PieChart as PieChartIcon, Calendar, Settings, RefreshCw, Download, Filter, Zap, Target, Brain, Satellite } from "lucide-react";
@@ -90,8 +94,11 @@ const correlationData = [
 ];
 
 const MacroCompass = () => {
+  const [selectedTimeframe, setSelectedTimeframe] = useState("1M");
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [timeframe, setTimeframe] = useState("YTD");
-  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [calendarSelectedDate, setCalendarSelectedDate] = useState<Date>();
   const [activeView, setActiveView] = useState("grid");
 
   const chartConfig = {
@@ -120,17 +127,17 @@ const MacroCompass = () => {
           
           <div className="flex items-center gap-2">
             <Popover>
-              <PopoverTrigger asChild>
+                <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-9">
                   <Calendar className="h-4 w-4 mr-2" />
-                  {selectedDate ? format(selectedDate, "PPP") : "Date Range"}
+                  {calendarSelectedDate ? format(calendarSelectedDate, "PPP") : "Date Range"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <CalendarComponent
                   mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
+                  selected={calendarSelectedDate}
+                  onSelect={setCalendarSelectedDate}
                   initialFocus
                   className={cn("p-3 pointer-events-auto")}
                 />
@@ -252,9 +259,9 @@ const MacroCompass = () => {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="markets">Live Markets</TabsTrigger>
             <TabsTrigger value="economics">Economics</TabsTrigger>
-            <TabsTrigger value="correlations">Correlations</TabsTrigger>
+            <TabsTrigger value="correlations">Risk & Correlations</TabsTrigger>
             <TabsTrigger value="sentiment">Sentiment</TabsTrigger>
-            <TabsTrigger value="risk">Risk Analytics</TabsTrigger>
+            <TabsTrigger value="calendar">Calendar</TabsTrigger>
             <TabsTrigger value="news">News & Events</TabsTrigger>
           </TabsList>
 
@@ -322,198 +329,216 @@ const MacroCompass = () => {
           </TabsContent>
 
           <TabsContent value="correlations" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Asset Correlation Radar</CardTitle>
-                  <CardDescription>Multi-dimensional correlation analysis</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart data={correlationData}>
-                        <PolarGrid stroke="hsl(var(--border))" />
-                        <PolarAngleAxis dataKey="subject" stroke="hsl(var(--muted-foreground))" />
-                        <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="hsl(var(--muted-foreground))" />
-                        <Radar name="Current" dataKey="A" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.1} strokeWidth={2} />
-                        <Radar name="Previous" dataKey="B" stroke="hsl(var(--secondary))" fill="hsl(var(--secondary))" fillOpacity={0.1} strokeWidth={2} strokeDasharray="5 5" />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Dynamic Correlation Matrix</CardTitle>
-                  <CardDescription>Rolling correlation heatmap</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-6 gap-1 text-xs">
-                    {['', 'SPX', 'NDX', 'VIX', 'DXY', 'GLD'].map((label, i) => (
-                      <div key={i} className={`p-2 text-center font-medium ${i === 0 ? '' : 'bg-muted/20'}`}>
-                        {label}
-                      </div>
-                    ))}
-                    {[
-                      ['SPX', 1.00, 0.85, -0.73, -0.45, 0.12],
-                      ['NDX', 0.85, 1.00, -0.68, -0.52, 0.08],
-                      ['VIX', -0.73, -0.68, 1.00, 0.23, -0.15],
-                      ['DXY', -0.45, -0.52, 0.23, 1.00, -0.67],
-                      ['GLD', 0.12, 0.08, -0.15, -0.67, 1.00]
-                    ].map((row, i) => 
-                      row.map((cell, j) => (
-                        <div 
-                          key={`${i}-${j}`} 
-                          className={`p-2 text-center text-xs ${
-                            j === 0 ? 'font-medium bg-muted/20' : 
-                            Math.abs(cell as number) > 0.7 ? 'bg-primary/20 text-primary' :
-                            Math.abs(cell as number) > 0.4 ? 'bg-secondary/20 text-secondary' :
-                            'bg-muted/10'
-                          }`}
-                        >
-                          {j === 0 ? cell : (cell as number).toFixed(2)}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <CorrelationMatrix
+              assets={["SPY", "QQQ", "GLD", "TLT", "VIX", "DXY", "BTC", "EURUSD"]}
+              correlations={[
+                { asset1: "SPY", asset2: "QQQ", correlation: 0.92, significance: 99, period: "1M" },
+                { asset1: "SPY", asset2: "VIX", correlation: -0.78, significance: 95, period: "1M" },
+                { asset1: "GLD", asset2: "DXY", correlation: -0.65, significance: 89, period: "1M" },
+                { asset1: "TLT", asset2: "SPY", correlation: -0.23, significance: 78, period: "1M" },
+                { asset1: "BTC", asset2: "SPY", correlation: 0.45, significance: 85, period: "1M" },
+                { asset1: "BTC", asset2: "GLD", correlation: 0.12, significance: 65, period: "1M" }
+              ]}
+              timeframe={selectedTimeframe}
+              onTimeframeChange={setSelectedTimeframe}
+            />
+            
+            <RiskMetrics
+              metrics={[
+                {
+                  name: "Portfolio VaR (95%)",
+                  value: 2.4,
+                  change: 0.3,
+                  status: "medium",
+                  description: "Maximum expected loss over 1-day period with 95% confidence",
+                  threshold: { low: 1.0, medium: 2.0, high: 3.0 }
+                },
+                {
+                  name: "Sharpe Ratio",
+                  value: 1.2,
+                  change: -0.1,
+                  status: "medium",
+                  description: "Risk-adjusted return measure",
+                  threshold: { low: 0.5, medium: 1.0, high: 1.5 }
+                },
+                {
+                  name: "Beta",
+                  value: 1.05,
+                  change: 0.05,
+                  status: "low",
+                  description: "Sensitivity to market movements",
+                  threshold: { low: 0.8, medium: 1.0, high: 1.2 }
+                },
+                {
+                  name: "Maximum Drawdown",
+                  value: 8.5,
+                  change: 1.2,
+                  status: "high",
+                  description: "Largest peak-to-trough decline",
+                  threshold: { low: 5.0, medium: 10.0, high: 15.0 }
+                },
+                {
+                  name: "Volatility (30d)",
+                  value: 18.3,
+                  change: 2.1,
+                  status: "medium",
+                  description: "Annualized volatility over 30 days",
+                  threshold: { low: 10.0, medium: 20.0, high: 30.0 }
+                },
+                {
+                  name: "Correlation Risk",
+                  value: 0.73,
+                  change: 0.08,
+                  status: "high",
+                  description: "Average correlation between holdings",
+                  threshold: { low: 0.3, medium: 0.6, high: 0.8 }
+                }
+              ]}
+              overallScore={68}
+              riskAppetite="moderate"
+            />
           </TabsContent>
 
           <TabsContent value="sentiment" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Market Sentiment Analysis</CardTitle>
-                  <CardDescription>AI-powered sentiment tracking across multiple data sources</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <AdvancedChart
-                    data={advancedMarketData}
-                    title=""
-                    primaryMetric="sentiment"
-                    chartType="area"
-                    height={300}
-                  />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sentiment Breakdown</CardTitle>
-                  <CardDescription>Real-time sentiment across channels</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { source: "Social Media", score: 78, change: 5.2 },
-                    { source: "News Articles", score: 65, change: -2.1 },
-                    { source: "Analyst Reports", score: 82, change: 3.7 },
-                    { source: "Options Flow", score: 71, change: 1.8 },
-                    { source: "Insider Trading", score: 89, change: 7.3 }
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
-                      <span className="font-medium">{item.source}</span>
-                      <div className="flex items-center gap-3">
-                        <div className="text-right">
-                          <div className="font-semibold">{item.score}/100</div>
-                          <div className={`text-xs ${item.change >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                            {item.change > 0 ? '+' : ''}{item.change.toFixed(1)}%
-                          </div>
-                        </div>
-                        <div className="w-16 h-2 bg-muted rounded-full">
-                          <div 
-                            className="h-full bg-primary rounded-full transition-all" 
-                            style={{ width: `${item.score}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
+            <SentimentAnalysis
+              sources={[
+                {
+                  source: "Social Media Sentiment",
+                  sentiment: 32,
+                  change: 5.2,
+                  volume: 1250000,
+                  reliability: 78,
+                  lastUpdated: "2 minutes ago"
+                },
+                {
+                  source: "News Sentiment",
+                  sentiment: -15,
+                  change: -8.3,
+                  volume: 45000,
+                  reliability: 92,
+                  lastUpdated: "5 minutes ago"
+                },
+                {
+                  source: "Options Flow",
+                  sentiment: 18,
+                  change: 3.1,
+                  volume: 890000,
+                  reliability: 85,
+                  lastUpdated: "1 minute ago"
+                },
+                {
+                  source: "Institutional Flow",
+                  sentiment: -8,
+                  change: -2.4,
+                  volume: 125000,
+                  reliability: 95,
+                  lastUpdated: "10 minutes ago"
+                }
+              ]}
+              metrics={[
+                {
+                  name: "Put/Call Ratio",
+                  value: 1.23,
+                  change: 0.08,
+                  description: "Options positioning indicator"
+                },
+                {
+                  name: "AAII Bull/Bear",
+                  value: 0.95,
+                  change: -0.12,
+                  description: "Individual investor sentiment"
+                },
+                {
+                  name: "CNN Fear/Greed",
+                  value: 42,
+                  change: -5,
+                  description: "Market emotion composite"
+                },
+                {
+                  name: "VIX Term Structure",
+                  value: 1.15,
+                  change: 0.03,
+                  description: "Volatility curve shape"
+                }
+              ]}
+              overallSentiment={15}
+              fearGreedIndex={42}
+            />
           </TabsContent>
 
-          <TabsContent value="risk" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>VaR Analysis</CardTitle>
-                  <CardDescription>Value at Risk metrics</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { period: "1-Day", var95: "-2.1%", var99: "-3.4%" },
-                    { period: "1-Week", var95: "-4.8%", var99: "-7.2%" },
-                    { period: "1-Month", var95: "-8.9%", var99: "-13.1%" }
-                  ].map((item, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">{item.period}</span>
-                        <Badge variant="outline">95% / 99%</Badge>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-destructive font-mono">{item.var95}</span>
-                        <span className="text-destructive font-mono font-bold">{item.var99}</span>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Stress Test Results</CardTitle>
-                  <CardDescription>Portfolio performance under extreme scenarios</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {[
-                    { scenario: "2008 Financial Crisis", impact: "-42.3%" },
-                    { scenario: "COVID-19 Crash", impact: "-28.1%" },
-                    { scenario: "1987 Black Monday", impact: "-35.7%" },
-                    { scenario: "Rate Shock +200bp", impact: "-15.2%" }
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 rounded bg-muted/10">
-                      <span className="text-sm">{item.scenario}</span>
-                      <Badge variant="destructive">{item.impact}</Badge>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Risk Attribution</CardTitle>
-                  <CardDescription>Sources of portfolio risk</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {[
-                      { factor: "Market Beta", contribution: 45 },
-                      { factor: "Sector Exposure", contribution: 28 },
-                      { factor: "Interest Rate", contribution: 15 },
-                      { factor: "Currency", contribution: 8 },
-                      { factor: "Idiosyncratic", contribution: 4 }
-                    ].map((item, index) => (
-                      <div key={index} className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span>{item.factor}</span>
-                          <span>{item.contribution}%</span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all" 
-                            style={{ width: `${item.contribution}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          <TabsContent value="calendar" className="space-y-6">
+            <EconomicCalendar
+              events={[
+                {
+                  id: "1",
+                  date: new Date(),
+                  time: "08:30",
+                  title: "Initial Jobless Claims",
+                  country: "US",
+                  impact: "medium",
+                  previous: 240000,
+                  forecast: 235000,
+                  actual: 228000,
+                  currency: "USD",
+                  category: "Employment",
+                  description: "Weekly measure of new unemployment benefit claims, indicating labor market health."
+                },
+                {
+                  id: "2",
+                  date: new Date(),
+                  time: "10:00",
+                  title: "Existing Home Sales",
+                  country: "US",
+                  impact: "low",
+                  previous: 4.15,
+                  forecast: 4.20,
+                  currency: "USD",
+                  category: "Housing",
+                  description: "Monthly sales of existing homes, reflecting housing market activity."
+                },
+                {
+                  id: "3",
+                  date: new Date(),
+                  time: "14:00",
+                  title: "Fed Chair Powell Speech",
+                  country: "US",
+                  impact: "high",
+                  previous: "-",
+                  forecast: "-",
+                  currency: "USD",
+                  category: "Central Bank",
+                  description: "Federal Reserve Chair speech on monetary policy outlook and economic conditions."
+                },
+                {
+                  id: "4",
+                  date: new Date(Date.now() + 86400000),
+                  time: "09:00",
+                  title: "ECB Interest Rate Decision",
+                  country: "EU",
+                  impact: "high",
+                  previous: 4.50,
+                  forecast: 4.25,
+                  currency: "EUR",
+                  category: "Central Bank",
+                  description: "European Central Bank's decision on benchmark interest rates."
+                },
+                {
+                  id: "5",
+                  date: new Date(Date.now() + 172800000),
+                  time: "01:30",
+                  title: "Japan CPI (YoY)",
+                  country: "JP",
+                  impact: "high",
+                  previous: 2.8,
+                  forecast: 2.5,
+                  currency: "JPY",
+                  category: "Inflation",
+                  description: "Consumer Price Index year-over-year change, key inflation measure."
+                }
+              ]}
+              selectedDate={selectedDate}
+              onDateSelect={setSelectedDate}
+            />
           </TabsContent>
 
           <TabsContent value="news" className="space-y-6">
