@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import { useNavigate } from "react-router-dom"
 import { useAssetUniverse } from "@/hooks/useAssetUniverse"
+import { AssetsUniverseView } from "@/components/AssetsUniverseView"
 
 type AssetType = "stock" | "crypto" | "bond" | "etf" | "real_estate" | "commodity" | "other"
 type RiskCategory = "low" | "medium" | "high" | "very_high"
@@ -591,88 +592,8 @@ const Assets = () => {
             </CardContent>
           </Card>
 
-          {/* User Assets Grid */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Your Portfolio Assets</h3>
-            <div className="grid gap-4">
-            {assets.length === 0 ? (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <div className="text-muted-foreground">
-                    <p>No assets found. Create your first asset to get started.</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              assets.map((asset) => (
-                <Card key={asset.id} className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                        <span className="text-sm font-semibold text-primary">
-                          {asset.symbol ? asset.symbol.slice(0, 3) : asset.name.slice(0, 3)}
-                        </span>
-                      </div>
-                      
-                      <div>
-                        <h3 className="font-medium text-foreground">{asset.name}</h3>
-                        {asset.symbol && (
-                          <p className="text-sm text-muted-foreground">{asset.symbol}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="text-xs">
-                            {asset.asset_type}
-                          </Badge>
-                          <Badge variant="outline" className={`text-xs ${getRiskColor(asset.risk_category)}`}>
-                            {asset.risk_category.replace('_', ' ')}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="font-medium text-foreground">
-                        {asset.quantity} shares
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        ${asset.current_price?.toFixed(2) || '0.00'} each
-                      </p>
-                      <p className="text-lg font-semibold text-foreground">
-                        ${asset.total_value?.toLocaleString() || '0'}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => editInAssetComposer(asset.id)}
-                      >
-                        <GitBranch className="w-4 h-4 mr-2" />
-                        Edit in Asset Composer
-                      </Button>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => deleteAsset(asset.id)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))
-            )}
-            </div>
-          </div>
+          {/* Import the new AssetsUniverseView component */}
+          <AssetsUniverseView assets={assets} onAssetUpdate={fetchAssets} />
         </div>
       </DashboardLayout>
     </ProtectedRoute>
