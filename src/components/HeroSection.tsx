@@ -19,7 +19,7 @@ export const HeroSection = ({ title, subtitle, variant = 'default' }: HeroSectio
       </div>
 
       {/* Moving particles */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-5">
         {isRadial ? (
           // Radial particles moving from center outwards - star cruising simulation
           [...Array(150)].map((_, i) => {
@@ -40,9 +40,9 @@ export const HeroSection = ({ title, subtitle, variant = 'default' }: HeroSectio
                 } as React.CSSProperties & { '--angle': string; '--distance': string }}
               >
                 <div 
-                  className="w-0.5 h-0.5 bg-primary rounded-full opacity-30"
+                  className="w-1 h-1 bg-primary rounded-full opacity-60"
                   style={{
-                    boxShadow: '0 0 2px hsl(var(--primary))'
+                    boxShadow: '0 0 8px hsl(var(--primary)), 0 0 3px hsl(var(--primary))'
                   }}
                 ></div>
               </div>
@@ -79,7 +79,7 @@ export const HeroSection = ({ title, subtitle, variant = 'default' }: HeroSectio
       </div>
       
       {/* Content */}
-      <div className="relative z-10 h-full flex items-center justify-center">
+      <div className="relative z-20 h-full flex items-center justify-center">
         <div className="text-center animate-fade-in">
           <h1 className={`${isRadial ? 'text-6xl md:text-7xl' : 'text-4xl md:text-5xl'} font-bold text-foreground mb-3 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent`}>
             {title}
