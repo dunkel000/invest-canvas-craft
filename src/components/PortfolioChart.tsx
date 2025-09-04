@@ -16,42 +16,46 @@ export const PortfolioChart = () => {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={mockData}>
           <defs>
-            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+            <linearGradient id="portfolioGradientPrimary" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.4} />
+              <stop offset="70%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.1} />
+              <stop offset="100%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.02} />
             </linearGradient>
-            <linearGradient id="colorGrowth" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#059669" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#059669" stopOpacity={0}/>
+            <linearGradient id="portfolioGradientSecondary" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--chart-line-secondary))" stopOpacity={0.3} />
+              <stop offset="70%" stopColor="hsl(var(--chart-line-secondary))" stopOpacity={0.08} />
+              <stop offset="100%" stopColor="hsl(var(--chart-line-secondary))" stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#10b981" opacity={0.2} />
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
           <XAxis dataKey="name" axisLine={false} tickLine={false} className="text-xs text-muted-foreground" />
           <YAxis axisLine={false} tickLine={false} className="text-xs text-muted-foreground" />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-              border: '1px solid #10b981',
+              backgroundColor: 'hsl(var(--popover))', 
+              border: '1px solid hsl(var(--border))',
               borderRadius: '8px',
-              color: '#10b981'
+              color: 'hsl(var(--popover-foreground))'
             }}
             formatter={(value: number) => [`$${value.toLocaleString()}`, 'Value']}
           />
           <Area
             type="monotone"
             dataKey="value"
-            stroke="#10b981"
+            stroke="hsl(var(--chart-line-primary))"
             fillOpacity={1}
-            fill="url(#colorValue)"
-            strokeWidth={2}
+            fill="url(#portfolioGradientPrimary)"
+            strokeWidth={2.5}
+            dot={false}
           />
           <Area
             type="monotone"
             dataKey="growth"
-            stroke="#059669"
+            stroke="hsl(var(--chart-line-secondary))"
             fillOpacity={1}
-            fill="url(#colorGrowth)"
-            strokeWidth={2}
+            fill="url(#portfolioGradientSecondary)"
+            strokeWidth={2.5}
+            dot={false}
           />
         </AreaChart>
       </ResponsiveContainer>

@@ -97,25 +97,51 @@ export const AdvancedChart = ({
               ))}
               
               {chartType === "area" && (
-                <Area 
-                  type="monotone" 
-                  dataKey={primaryMetric} 
-                  stroke="hsl(var(--primary))" 
-                  fill="hsl(var(--primary))" 
-                  fillOpacity={0.1}
-                  strokeWidth={2}
-                />
+                <>
+                  <defs>
+                    <linearGradient id="chartGradientPrimary" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.4} />
+                      <stop offset="70%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.1} />
+                      <stop offset="100%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <Area 
+                    type="monotone" 
+                    dataKey={primaryMetric} 
+                    stroke="hsl(var(--chart-line-primary))" 
+                    fill="url(#chartGradientPrimary)" 
+                    strokeWidth={2.5}
+                    dot={false}
+                    activeDot={{ r: 5, stroke: "hsl(var(--chart-line-primary))", strokeWidth: 2, fill: "hsl(var(--chart-line-primary))" }}
+                  />
+                </>
               )}
               
               {(chartType === "line" || chartType === "composed") && (
-                <Line 
-                  type="monotone" 
-                  dataKey={primaryMetric} 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 3 }}
-                  activeDot={{ r: 5, stroke: "hsl(var(--primary))", strokeWidth: 2 }}
-                />
+                <>
+                  <defs>
+                    <linearGradient id="chartGradientPrimary" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.4} />
+                      <stop offset="70%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.1} />
+                      <stop offset="100%" stopColor="hsl(var(--chart-line-primary))" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <Area 
+                    type="monotone" 
+                    dataKey={primaryMetric} 
+                    stroke="hsl(var(--chart-line-primary))" 
+                    fill="url(#chartGradientPrimary)" 
+                    strokeWidth={0}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey={primaryMetric} 
+                    stroke="hsl(var(--chart-line-primary))" 
+                    strokeWidth={2.5}
+                    dot={false}
+                    activeDot={{ r: 5, stroke: "hsl(var(--chart-line-primary))", strokeWidth: 2, fill: "hsl(var(--chart-line-primary))" }}
+                  />
+                </>
               )}
               
               {secondaryMetric && (
