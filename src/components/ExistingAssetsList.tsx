@@ -253,11 +253,13 @@ export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset, onCreat
               <CardTitle className="text-lg">Composed Assets</CardTitle>
               {onCreateAsset && (
                 <Button 
+                  variant="outline"
                   size="sm" 
                   onClick={onCreateAsset}
-                  className="h-8 w-8 p-0"
+                  className="text-white border-white hover:bg-white/10"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Asset
                 </Button>
               )}
             </div>
@@ -372,11 +374,13 @@ export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset, onCreat
             <CardTitle className="text-lg">Composed Assets ({composedAssets.length})</CardTitle>
             {onCreateAsset && (
               <Button 
+                variant="outline"
                 size="sm" 
                 onClick={onCreateAsset}
-                className="h-8 w-8 p-0"
+                className="text-white border-white hover:bg-white/10"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 mr-2" />
+                Add New Asset
               </Button>
             )}
           </div>
