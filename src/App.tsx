@@ -34,6 +34,9 @@ import SystemSettings from "./pages/admin/SystemSettings";
 import AuditLogs from "./pages/admin/AuditLogs";
 import MacroCompass from "./pages/MacroCompass";
 
+// Quant Lab Pages
+import QuantNotebooks from "./pages/lab/QuantNotebooks";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -81,6 +84,10 @@ const App = () => (
               <Route path="/asset-composer" element={<AssetComposer />} />
               <Route path="/api-connections" element={<ApiConnections />} />
               <Route path="/macro-compass" element={<MacroCompass />} />
+              
+              {/* Quant Lab Routes */}
+              <Route path="/lab/notebooks" element={<QuantNotebooks />} />
+              
               <Route path="/analytics" element={<div>Analytics coming soon</div>} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/auth" element={<Auth />} />

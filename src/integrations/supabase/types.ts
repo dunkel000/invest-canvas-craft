@@ -496,6 +496,285 @@ export type Database = {
         }
         Relationships: []
       }
+      quant_artifacts: {
+        Row: {
+          artifact_type: Database["public"]["Enums"]["artifact_type"]
+          created_at: string
+          file_path: string | null
+          id: string
+          metadata: Json | null
+          name: string
+          run_id: string | null
+          size_bytes: number | null
+          user_id: string
+        }
+        Insert: {
+          artifact_type: Database["public"]["Enums"]["artifact_type"]
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          metadata?: Json | null
+          name: string
+          run_id?: string | null
+          size_bytes?: number | null
+          user_id: string
+        }
+        Update: {
+          artifact_type?: Database["public"]["Enums"]["artifact_type"]
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          metadata?: Json | null
+          name?: string
+          run_id?: string | null
+          size_bytes?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_artifacts_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "quant_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_datasets: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          last_synced: string | null
+          name: string
+          row_count: number | null
+          schema_info: Json | null
+          source_config: Json
+          source_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_synced?: string | null
+          name: string
+          row_count?: number | null
+          schema_info?: Json | null
+          source_config?: Json
+          source_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_synced?: string | null
+          name?: string
+          row_count?: number | null
+          schema_info?: Json | null
+          source_config?: Json
+          source_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      quant_jobs: {
+        Row: {
+          created_at: string
+          cron_expression: string
+          description: string | null
+          id: string
+          last_run_id: string | null
+          name: string
+          next_run_at: string | null
+          notebook_id: string | null
+          parameters: Json | null
+          status: Database["public"]["Enums"]["job_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          cron_expression: string
+          description?: string | null
+          id?: string
+          last_run_id?: string | null
+          name: string
+          next_run_at?: string | null
+          notebook_id?: string | null
+          parameters?: Json | null
+          status?: Database["public"]["Enums"]["job_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          cron_expression?: string
+          description?: string | null
+          id?: string
+          last_run_id?: string | null
+          name?: string
+          next_run_at?: string | null
+          notebook_id?: string | null
+          parameters?: Json | null
+          status?: Database["public"]["Enums"]["job_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_jobs_notebook_id_fkey"
+            columns: ["notebook_id"]
+            isOneToOne: false
+            referencedRelation: "quant_notebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_notebooks: {
+        Row: {
+          content: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          name: string
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name?: string
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      quant_runs: {
+        Row: {
+          code: string
+          completed_at: string | null
+          created_at: string
+          execution_time_ms: number | null
+          id: string
+          memory_usage_mb: number | null
+          notebook_id: string | null
+          parameters: Json | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["execution_status"]
+          stderr: string | null
+          stdout: string | null
+          user_id: string
+        }
+        Insert: {
+          code: string
+          completed_at?: string | null
+          created_at?: string
+          execution_time_ms?: number | null
+          id?: string
+          memory_usage_mb?: number | null
+          notebook_id?: string | null
+          parameters?: Json | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["execution_status"]
+          stderr?: string | null
+          stdout?: string | null
+          user_id: string
+        }
+        Update: {
+          code?: string
+          completed_at?: string | null
+          created_at?: string
+          execution_time_ms?: number | null
+          id?: string
+          memory_usage_mb?: number | null
+          notebook_id?: string | null
+          parameters?: Json | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["execution_status"]
+          stderr?: string | null
+          stdout?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_runs_notebook_id_fkey"
+            columns: ["notebook_id"]
+            isOneToOne: false
+            referencedRelation: "quant_notebooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_snippets: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          name: string
+          parameters: Json | null
+          tags: string[] | null
+          updated_at: string
+          usage_count: number
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name: string
+          parameters?: Json | null
+          tags?: string[] | null
+          updated_at?: string
+          usage_count?: number
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name?: string
+          parameters?: Json | null
+          tags?: string[] | null
+          updated_at?: string
+          usage_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       role_module_permissions: {
         Row: {
           created_at: string
@@ -642,6 +921,21 @@ export type Database = {
           sort_order: number
         }[]
       }
+      get_user_portfolio_data: {
+        Args: { _user_id: string }
+        Returns: {
+          allocation_percentage: number
+          asset_id: string
+          asset_name: string
+          asset_symbol: string
+          asset_type: string
+          current_price: number
+          portfolio_id: string
+          portfolio_name: string
+          quantity: number
+          total_value: number
+        }[]
+      }
       get_user_role_limits: {
         Args: { _user_id: string }
         Returns: {
@@ -711,6 +1005,7 @@ export type Database = {
         | "investment_professional"
         | "premium_user"
         | "standard_user"
+      artifact_type: "chart" | "data" | "report" | "image"
       asset_type:
         | "stock"
         | "crypto"
@@ -726,6 +1021,13 @@ export type Database = {
         | "interest"
         | "capital_gain"
         | "capital_loss"
+      execution_status:
+        | "pending"
+        | "running"
+        | "completed"
+        | "failed"
+        | "cancelled"
+      job_status: "active" | "paused" | "completed" | "failed"
       math_function_type:
         | "add"
         | "subtract"
@@ -871,6 +1173,7 @@ export const Constants = {
         "premium_user",
         "standard_user",
       ],
+      artifact_type: ["chart", "data", "report", "image"],
       asset_type: [
         "stock",
         "crypto",
@@ -888,6 +1191,14 @@ export const Constants = {
         "capital_gain",
         "capital_loss",
       ],
+      execution_status: [
+        "pending",
+        "running",
+        "completed",
+        "failed",
+        "cancelled",
+      ],
+      job_status: ["active", "paused", "completed", "failed"],
       math_function_type: [
         "add",
         "subtract",
