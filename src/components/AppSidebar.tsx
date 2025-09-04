@@ -40,8 +40,8 @@ export function AppSidebar() {
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path)
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive
-      ? "bg-sidebar-accent text-green-600 font-medium hover:text-green-600 active:text-green-600"
-      : "text-green-600 hover:bg-sidebar-accent/50 hover:text-green-600 active:text-green-600"
+      ? "bg-sidebar-accent text-primary font-medium hover:text-primary active:text-primary"
+      : "text-primary hover:bg-sidebar-accent/50 hover:text-primary active:text-primary"
 
   const handleSignOut = () => {
     signOut()
@@ -96,8 +96,8 @@ export function AppSidebar() {
                 <Wallet className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1">
-              <h2 className="font-semibold text-green-600">Medusa FinHub</h2>
-                <p className="text-xs text-green-600/60">Loading...</p>
+              <h2 className="font-semibold text-primary">Medusa FinHub</h2>
+                <p className="text-xs text-muted-foreground">Loading...</p>
               </div>
               <ProfileAvatar />
             </div>
@@ -116,8 +116,8 @@ export function AppSidebar() {
               <Wallet className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
-              <h2 className="font-semibold text-green-600">Medusa FinHub</h2>
-              <p className="text-xs text-green-600/60">Investment Platform</p>
+              <h2 className="font-semibold text-primary">Medusa FinHub</h2>
+              <p className="text-xs text-muted-foreground">Investment Platform</p>
             </div>
             <ProfileAvatar />
           </div>
@@ -128,12 +128,12 @@ export function AppSidebar() {
           <SidebarGroup>
             <Collapsible open={adminOpen} onOpenChange={setAdminOpen}>
               <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-green-600 hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
+                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-primary hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                   <span className="flex items-center gap-2">
                     <Crown className="h-4 w-4" />
                     Admin
                   </span>
-                  <ChevronDown className={`h-4 w-4 transition-transform text-green-600 ${adminOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 transition-transform text-primary ${adminOpen ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>
@@ -163,9 +163,9 @@ export function AppSidebar() {
           <SidebarGroup>
             <Collapsible open={wealthOpen} onOpenChange={setWealthOpen}>
               <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-green-600 hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
+                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-primary hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                   <span>Wealth Management</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform text-green-600 ${wealthOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 transition-transform text-primary ${wealthOpen ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>
@@ -184,9 +184,9 @@ export function AppSidebar() {
           <SidebarGroup>
             <Collapsible open={portfoliosOpen} onOpenChange={setPortfoliosOpen}>
               <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-green-600 hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
+                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-primary hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                   <span>Portfolios</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform text-green-600 ${portfoliosOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 transition-transform text-primary ${portfoliosOpen ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>
@@ -205,9 +205,9 @@ export function AppSidebar() {
           <SidebarGroup>
             <Collapsible open={toolsOpen} onOpenChange={setToolsOpen}>
               <SidebarGroupLabel asChild>
-                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-green-600 hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
+                <CollapsibleTrigger className="group/collapsible w-full flex items-center justify-between text-sm font-medium text-primary hover:bg-sidebar-accent/50 px-2 py-1 rounded-md data-[state=open]:bg-sidebar-accent/30">
                   <span>Tools & Analytics</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform text-green-600 ${toolsOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-4 w-4 transition-transform text-primary ${toolsOpen ? 'rotate-180' : ''}`} />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
               <CollapsibleContent>
@@ -227,7 +227,7 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-1">
               {modulesByCategory.settings && renderMenuItems(modulesByCategory.settings)}
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleSignOut} className="text-green-600 hover:bg-sidebar-accent/50 hover:text-green-600 active:text-green-600">
+                <SidebarMenuButton onClick={handleSignOut} className="text-primary hover:bg-sidebar-accent/50 hover:text-primary active:text-primary">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>
                 </SidebarMenuButton>

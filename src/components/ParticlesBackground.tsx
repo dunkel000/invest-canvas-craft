@@ -44,7 +44,7 @@ export const ParticlesBackground = () => {
     },
     manualParticles,
     particles: {
-      color: { value: ["#10b981", "#059669", "#047857"] },
+      color: { value: ["hsl(var(--primary))", "hsl(var(--chart-line-primary))", "hsl(var(--success))"] },
       links: { enable: false },
       move: { enable: false },
       number: { value: 0 },

@@ -8,7 +8,7 @@ interface PortfolioAllocationProps {
   assets: Asset[];
 }
 
-const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#f97316'];
+const COLORS = ['hsl(var(--chart-line-primary))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))', 'hsl(var(--warning))'];
 
 export const PortfolioAllocation = ({ assets }: PortfolioAllocationProps) => {
   const allocationData = assets.map((asset, index) => ({
@@ -85,7 +85,7 @@ export const PortfolioAllocation = ({ assets }: PortfolioAllocationProps) => {
                   formatter={(value: number) => [`$${value.toLocaleString()}`, 'Value']}
                   labelFormatter={(label) => `Asset: ${label}`}
                 />
-                <Bar dataKey="amount" fill="#10b981" />
+                <Bar dataKey="amount" fill="hsl(var(--chart-line-primary))" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
