@@ -107,6 +107,23 @@ All colors MUST be HSL.
   50% { transform: translateY(-15px); }
 }
 
+@keyframes radial-expand {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0px) rotate(calc(-1 * var(--angle)));
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.4;
+  }
+  80% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(calc(-1 * var(--distance))) rotate(calc(-1 * var(--angle)));
+    opacity: 0;
+  }
+}
+
 @keyframes float-diagonal {
   0%, 100% { transform: translate(0px, 0px); }
   33% { transform: translate(15px, -10px); }
@@ -127,4 +144,8 @@ All colors MUST be HSL.
 
 .animate-float-diagonal {
   animation: float-diagonal 10s ease-in-out infinite;
+}
+
+.animate-radial-expand {
+  animation: radial-expand 12s ease-out infinite;
 }

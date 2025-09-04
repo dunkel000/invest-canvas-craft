@@ -1,11 +1,15 @@
 interface HeroSectionProps {
   title: string;
   subtitle: string;
+  variant?: 'default' | 'radial';
 }
 
-export const HeroSection = ({ title, subtitle }: HeroSectionProps) => {
+export const HeroSection = ({ title, subtitle, variant = 'default' }: HeroSectionProps) => {
+  const isRadial = variant === 'radial';
+  const headerHeight = isRadial ? 'h-80' : 'h-48';
+  
   return (
-    <div className="relative h-48 mb-8 rounded-xl overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/20">
+    <div className={`relative ${headerHeight} mb-8 rounded-xl overflow-hidden bg-gradient-to-b from-background via-background/80 to-background/20`}>
       {/* Fade to black gradient at bottom */}
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background/80 to-transparent z-20"></div>
       
@@ -16,40 +20,71 @@ export const HeroSection = ({ title, subtitle }: HeroSectionProps) => {
 
       {/* Moving particles */}
       <div className="absolute inset-0">
-        {[...Array(80)].map((_, i) => {
-          const animations = ['animate-float-x', 'animate-float-y', 'animate-float-diagonal'];
-          const sizes = ['w-0.5 h-0.5', 'w-1 h-1', 'w-1.5 h-1.5'];
-          const opacities = ['opacity-30', 'opacity-40', 'opacity-60'];
-          
-          return (
-            <div
-              key={i}
-              className={`absolute ${animations[i % animations.length]}`}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 8}s`,
-                animationDuration: `${6 + Math.random() * 8}s`
-              }}
-            >
-              <div 
-                className={`${sizes[i % sizes.length]} ${opacities[i % opacities.length]} bg-primary rounded-full`}
+        {isRadial ? (
+          // Radial particles moving from center outwards
+          [...Array(100)].map((_, i) => {
+            const angle = (i / 100) * 360;
+            const distance = 20 + (i % 4) * 15;
+            
+            return (
+              <div
+                key={i}
+                className="absolute animate-radial-expand"
                 style={{
-                  boxShadow: '0 0 6px hsl(var(--primary))'
+                  left: '50%',
+                  top: '50%',
+                  animationDelay: `${Math.random() * 4}s`,
+                  animationDuration: `${8 + Math.random() * 6}s`,
+                  '--angle': `${angle}deg`,
+                  '--distance': `${distance}px`
+                } as React.CSSProperties & { '--angle': string; '--distance': string }}
+              >
+                <div 
+                  className="w-0.5 h-0.5 bg-primary rounded-full opacity-40"
+                  style={{
+                    boxShadow: '0 0 4px hsl(var(--primary))'
+                  }}
+                ></div>
+              </div>
+            );
+          })
+        ) : (
+          // Default floating particles
+          [...Array(80)].map((_, i) => {
+            const animations = ['animate-float-x', 'animate-float-y', 'animate-float-diagonal'];
+            const sizes = ['w-0.5 h-0.5', 'w-1 h-1', 'w-1.5 h-1.5'];
+            const opacities = ['opacity-30', 'opacity-40', 'opacity-60'];
+            
+            return (
+              <div
+                key={i}
+                className={`absolute ${animations[i % animations.length]}`}
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 8}s`,
+                  animationDuration: `${6 + Math.random() * 8}s`
                 }}
-              ></div>
-            </div>
-          );
-        })}
+              >
+                <div 
+                  className={`${sizes[i % sizes.length]} ${opacities[i % opacities.length]} bg-primary rounded-full`}
+                  style={{
+                    boxShadow: '0 0 6px hsl(var(--primary))'
+                  }}
+                ></div>
+              </div>
+            );
+          })
+        )}
       </div>
       
       {/* Content */}
       <div className="relative z-10 h-full flex items-center justify-center">
         <div className="text-center animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+          <h1 className={`${isRadial ? 'text-6xl md:text-7xl' : 'text-4xl md:text-5xl'} font-bold text-foreground mb-3 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent`}>
             {title}
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className={`${isRadial ? 'text-xl' : 'text-lg'} text-muted-foreground max-w-2xl mx-auto`}>
             {subtitle}
           </p>
         </div>

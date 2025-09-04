@@ -10,6 +10,7 @@ const AssetComposerPage = () => {
         <HeroSection 
           title="Compose your own Symphony"
           subtitle="Design and analyze your asset compositions with cashflows and risk assessments"
+          variant="radial"
         />
 
         <div className="space-y-6">          
