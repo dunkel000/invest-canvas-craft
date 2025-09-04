@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 142.1 76.2% 36.3%;
+    --primary: 166 100% 37%;
     --primary-foreground: 355.7 100% 97.3%;
 
     --secondary: 240 3.7% 15.9%;
@@ -34,12 +34,12 @@ All colors MUST be HSL.
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 142.1 76.2% 36.3%;
+    --ring: 166 100% 37%;
 
     --radius: 0.75rem;
 
     /* Investment portfolio colors */
-    --success: 142.1 76.2% 36.3%;
+    --success: 166 100% 37%;
     --success-foreground: 0 0% 98%;
     
     --warning: 47.9 95.8% 53.1%;
@@ -49,7 +49,7 @@ All colors MUST be HSL.
     --info-foreground: 0 0% 98%;
 
     /* Chart colors */
-    --chart-1: 142.1 76.2% 36.3%;
+    --chart-1: 166 100% 37%;
     --chart-2: 47.9 95.8% 53.1%;
     --chart-3: 221.2 83.2% 53.3%;
     --chart-4: 262.1 83.3% 57.8%;
@@ -64,19 +64,19 @@ All colors MUST be HSL.
     --chart-line-secondary: 47.9 95.8% 53.1%;
 
     /* Gradients */
-    --gradient-success: linear-gradient(135deg, hsl(142.1 76.2% 36.3%), hsl(142.1 76.2% 46.3%));
+    --gradient-success: linear-gradient(135deg, hsl(166 100% 37%), hsl(166 100% 47%));
     --gradient-warning: linear-gradient(135deg, hsl(47.9 95.8% 53.1%), hsl(47.9 95.8% 63.1%));
-    --gradient-primary: linear-gradient(135deg, hsl(142.1 76.2% 36.3%), hsl(221.2 83.2% 53.3%));
+    --gradient-primary: linear-gradient(135deg, hsl(166 100% 37%), hsl(221.2 83.2% 53.3%));
 
     /* Sidebar */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 142.1 76.2% 36.3%;
+    --sidebar-primary: 166 100% 37%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 142.1 76.2% 36.3%;
+    --sidebar-ring: 166 100% 37%;
   }
 }
 
