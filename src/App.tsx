@@ -36,6 +36,9 @@ import MacroCompass from "./pages/MacroCompass";
 
 // Quant Lab Pages
 import QuantNotebooks from "./pages/lab/QuantNotebooks";
+import QuantDatasets from "./pages/lab/QuantDatasets";
+import QuantSnippets from "./pages/lab/QuantSnippets";
+import QuantJobs from "./pages/lab/QuantJobs";
 
 const queryClient = new QueryClient();
 
@@ -87,6 +90,9 @@ const App = () => (
               
               {/* Quant Lab Routes */}
               <Route path="/lab/notebooks" element={<QuantNotebooks />} />
+              <Route path="/lab/datasets" element={<QuantDatasets />} />
+              <Route path="/lab/snippets" element={<QuantSnippets />} />
+              <Route path="/lab/jobs" element={<QuantJobs />} />
               
               <Route path="/analytics" element={<div>Analytics coming soon</div>} />
               <Route path="/settings" element={<Settings />} />
