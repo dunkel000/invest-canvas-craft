@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Trash2, Eye } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Edit2, Trash2, Eye, Copy, Layers, Database } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +22,8 @@ interface Asset {
   current_price?: number;
   total_value?: number;
   created_at: string;
+  source?: string;
+  portfolio_id?: string;
 }
 
 interface ExistingAssetsListProps {
@@ -100,6 +104,68 @@ export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset }: Exist
     }
   };
 
+  const handleDuplicateAsset = async (asset: Asset) => {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        toast.error('User not authenticated');
+        return;
+      }
+
+      // Create a default portfolio if asset doesn't have one
+      let portfolioId = asset.portfolio_id;
+      if (!portfolioId) {
+        // Try to get user's first portfolio or create one
+        const { data: portfolios } = await supabase
+          .from('portfolios')
+          .select('id')
+          .eq('user_id', userData.user.id)
+          .limit(1);
+
+        if (portfolios && portfolios.length > 0) {
+          portfolioId = portfolios[0].id;
+        } else {
+          // Create a default portfolio
+          const { data: newPortfolio, error: portfolioError } = await supabase
+            .from('portfolios')
+            .insert({
+              user_id: userData.user.id,
+              name: 'Default Portfolio',
+              description: 'Auto-created for asset composition'
+            })
+            .select('id')
+            .single();
+
+          if (portfolioError) throw portfolioError;
+          portfolioId = newPortfolio.id;
+        }
+      }
+
+      const { error } = await supabase
+        .from('assets')
+        .insert({
+          user_id: userData.user.id,
+          portfolio_id: portfolioId,
+          name: `${asset.name} (Copy)`,
+          symbol: asset.symbol,
+          asset_type: asset.asset_type,
+          quantity: asset.quantity,
+          purchase_price: asset.purchase_price,
+          current_price: asset.current_price,
+          total_value: asset.total_value,
+          source: 'manual'
+        });
+
+      if (error) throw error;
+
+      toast.success('Asset duplicated successfully');
+      onAssetUpdate();
+    } catch (error) {
+      toast.error('Failed to duplicate asset');
+      console.error(error);
+    }
+  };
+
   const getAssetTypeColor = (type: string) => {
     const colors: Record<string, string> = {
       stock: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
@@ -111,6 +177,68 @@ export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset }: Exist
     };
     return colors[type] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
   };
+
+  const composedAssets = assets.filter(asset => asset.source === 'manual' || !asset.source);
+  const apiAssets = assets.filter(asset => asset.source === 'api' || asset.source === 'universe');
+
+  const renderAssetRow = (asset: Asset) => (
+    <div
+      key={asset.id}
+      className="flex items-center justify-between p-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
+    >
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <h4 className="font-medium text-sm truncate">{asset.name}</h4>
+          {asset.symbol && (
+            <span className="text-xs text-muted-foreground">({asset.symbol})</span>
+          )}
+          <Badge className={`text-xs ${getAssetTypeColor(asset.asset_type)}`}>
+            {asset.asset_type}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <span>Qty: {asset.quantity}</span>
+          <span>Value: ${asset.total_value?.toLocaleString() || '0'}</span>
+          <span>Price: ${asset.current_price?.toLocaleString() || '0'}</span>
+        </div>
+      </div>
+      
+      <div className="flex gap-1 ml-2">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => onLoadAsset(asset.id)}
+          title="Load into composer"
+        >
+          <Eye className="w-4 h-4" />
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => handleDuplicateAsset(asset)}
+          title="Duplicate asset"
+        >
+          <Copy className="w-4 h-4" />
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => openEditDialog(asset)}
+          title="Edit asset"
+        >
+          <Edit2 className="w-4 h-4" />
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => handleDeleteAsset(asset.id)}
+          title="Delete asset"
+        >
+          <Trash2 className="w-4 h-4" />
+        </Button>
+      </div>
+    </div>
+  );
 
   if (assets.length === 0) {
     return (
@@ -138,67 +266,48 @@ export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset }: Exist
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {assets.map((asset) => (
-              <div
-                key={asset.id}
-                className="p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm truncate">{asset.name}</h4>
-                    {asset.symbol && (
-                      <p className="text-xs text-muted-foreground">{asset.symbol}</p>
-                    )}
-                  </div>
-                  <Badge className={`text-xs ${getAssetTypeColor(asset.asset_type)}`}>
-                    {asset.asset_type}
-                  </Badge>
+          <Tabs defaultValue="composed" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="composed" className="flex items-center gap-2">
+                <Layers className="w-4 h-4" />
+                Composed ({composedAssets.length})
+              </TabsTrigger>
+              <TabsTrigger value="imported" className="flex items-center gap-2">
+                <Database className="w-4 h-4" />
+                Imported ({apiAssets.length})
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="composed" className="mt-4">
+              <ScrollArea className="h-[400px] w-full border rounded-md">
+                <div className="p-1">
+                  {composedAssets.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>No composed assets yet.</p>
+                      <p className="text-sm mt-2">Create assets manually to start building compositions.</p>
+                    </div>
+                  ) : (
+                    composedAssets.map(renderAssetRow)
+                  )}
                 </div>
-
-                <div className="space-y-1 mb-4">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Quantity:</span>
-                    <span>{asset.quantity}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Total Value:</span>
-                    <span className="font-medium">${asset.total_value?.toLocaleString() || '0'}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Current Price:</span>
-                    <span>${asset.current_price?.toLocaleString() || '0'}</span>
-                  </div>
+              </ScrollArea>
+            </TabsContent>
+            
+            <TabsContent value="imported" className="mt-4">
+              <ScrollArea className="h-[400px] w-full border rounded-md">
+                <div className="p-1">
+                  {apiAssets.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>No imported assets yet.</p>
+                      <p className="text-sm mt-2">Import assets from APIs to manage them here.</p>
+                    </div>
+                  ) : (
+                    apiAssets.map(renderAssetRow)
+                  )}
                 </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => onLoadAsset(asset.id)}
-                  >
-                    <Eye className="w-3 h-3 mr-1" />
-                    Load
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => openEditDialog(asset)}
-                  >
-                    <Edit2 className="w-3 h-3" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeleteAsset(asset.id)}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 

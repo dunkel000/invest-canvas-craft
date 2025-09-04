@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -127,6 +127,7 @@ export type Database = {
           purchase_price: number | null
           quantity: number
           risk_category: Database["public"]["Enums"]["risk_category"] | null
+          source: string
           symbol: string | null
           target_allocation_percentage: number | null
           total_value: number | null
@@ -147,6 +148,7 @@ export type Database = {
           purchase_price?: number | null
           quantity?: number
           risk_category?: Database["public"]["Enums"]["risk_category"] | null
+          source?: string
           symbol?: string | null
           target_allocation_percentage?: number | null
           total_value?: number | null
@@ -167,6 +169,7 @@ export type Database = {
           purchase_price?: number | null
           quantity?: number
           risk_category?: Database["public"]["Enums"]["risk_category"] | null
+          source?: string
           symbol?: string | null
           target_allocation_percentage?: number | null
           total_value?: number | null
@@ -614,13 +617,13 @@ export type Database = {
     Functions: {
       assign_role_to_user: {
         Args: {
-          _user_email: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_email: string
         }
         Returns: boolean
       }
       check_module_permission: {
-        Args: { _user_id: string; _module_id: string }
+        Args: { _module_id: string; _user_id: string }
         Returns: boolean
       }
       get_current_user_role: {
@@ -630,23 +633,23 @@ export type Database = {
       get_user_accessible_modules: {
         Args: { _user_id: string }
         Returns: {
+          category: string
+          description: string
+          icon: string
           module_id: string
           name: string
           path: string
-          icon: string
-          category: string
-          description: string
           sort_order: number
         }[]
       }
       get_user_role_limits: {
         Args: { _user_id: string }
         Returns: {
-          role: Database["public"]["Enums"]["app_role"]
-          max_portfolios: number
-          max_api_connections: number
-          max_requests_per_day: number
           features_enabled: Json
+          max_api_connections: number
+          max_portfolios: number
+          max_requests_per_day: number
+          role: Database["public"]["Enums"]["app_role"]
           subscription_tier: string
         }[]
       }
@@ -656,13 +659,13 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
       log_admin_action: {
-        Args: { _action: string; _target_user_id?: string; _details?: Json }
+        Args: { _action: string; _details?: Json; _target_user_id?: string }
         Returns: string
       }
       promote_to_admin: {
@@ -671,27 +674,27 @@ export type Database = {
       }
       remove_role_from_user: {
         Args: {
-          _user_email: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_email: string
         }
         Returns: boolean
       }
       update_role_limits: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _max_portfolios: number
-          _max_api_connections: number
-          _max_requests_per_day: number
           _features_enabled?: Json
+          _max_api_connections: number
+          _max_portfolios: number
+          _max_requests_per_day: number
+          _role: Database["public"]["Enums"]["app_role"]
           _subscription_tier?: string
         }
         Returns: boolean
       }
       update_role_module_permission: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _module_id: string
           _enabled: boolean
+          _module_id: string
+          _role: Database["public"]["Enums"]["app_role"]
         }
         Returns: boolean
       }
