@@ -56,11 +56,11 @@ All colors MUST be HSL.
     --chart-5: 346.8 77.2% 49.8%;
     
     /* Chart gradients for line charts */
-    --chart-gradient-primary: linear-gradient(180deg, hsl(142 76% 36% / 0.4) 0%, hsl(142 76% 36% / 0.1) 70%, hsl(142 76% 36% / 0.02) 100%);
+    --chart-gradient-primary: linear-gradient(180deg, hsl(166 100% 37% / 0.4) 0%, hsl(166 100% 37% / 0.1) 70%, hsl(166 100% 37% / 0.02) 100%);
     --chart-gradient-secondary: linear-gradient(180deg, hsl(47.9 95.8% 53.1% / 0.3) 0%, hsl(47.9 95.8% 53.1% / 0.05) 100%);
     
     /* Enhanced chart line colors */
-    --chart-line-primary: 142 76% 42%;
+    --chart-line-primary: 166 100% 37%;
     --chart-line-secondary: 47.9 95.8% 53.1%;
 
     /* Gradients */
