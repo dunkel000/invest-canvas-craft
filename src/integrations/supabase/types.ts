@@ -679,6 +679,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_portfolio_performance: {
+        Args: { _portfolio_id: string }
+        Returns: boolean
+      }
       update_role_limits: {
         Args: {
           _features_enabled?: Json
