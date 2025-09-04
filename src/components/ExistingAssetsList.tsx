@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Eye, Copy, Edit2, Trash2 } from "lucide-react";
+import { Eye, Copy, Edit2, Trash2, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -28,9 +28,10 @@ interface ExistingAssetsListProps {
   assets: Asset[];
   onAssetUpdate: () => void;
   onLoadAsset: (assetId: string) => void;
+  onCreateAsset?: () => void;
 }
 
-export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset }: ExistingAssetsListProps) {
+export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset, onCreateAsset }: ExistingAssetsListProps) {
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
@@ -248,7 +249,18 @@ export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset }: Exist
       <>
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-lg">Composed Assets</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Composed Assets</CardTitle>
+              {onCreateAsset && (
+                <Button 
+                  size="sm" 
+                  onClick={onCreateAsset}
+                  className="h-8 w-8 p-0"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-center py-8 text-muted-foreground">
@@ -356,7 +368,18 @@ export function ExistingAssetsList({ assets, onAssetUpdate, onLoadAsset }: Exist
     <>
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg">Composed Assets ({composedAssets.length})</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">Composed Assets ({composedAssets.length})</CardTitle>
+            {onCreateAsset && (
+              <Button 
+                size="sm" 
+                onClick={onCreateAsset}
+                className="h-8 w-8 p-0"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground">
             Load your composed assets into the Asset Composer
           </p>

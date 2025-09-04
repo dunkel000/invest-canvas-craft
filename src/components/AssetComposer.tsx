@@ -125,8 +125,20 @@ export function AssetComposer() {
   const [addNodeDialogOpen, setAddNodeDialogOpen] = useState(false)
   const [saveDialogOpen, setSaveDialogOpen] = useState(false)
   const [importDialogOpen, setImportDialogOpen] = useState(false)
+  const [createAssetDialogOpen, setCreateAssetDialogOpen] = useState(false)
   const [flowName, setFlowName] = useState('')
   const [flowDescription, setFlowDescription] = useState('')
+
+  const [newAsset, setNewAsset] = useState({
+    name: "",
+    symbol: "",
+    asset_type: "stock" as "stock" | "crypto" | "bond" | "etf" | "real_estate" | "commodity" | "other",
+    quantity: 0,
+    purchase_price: 0,
+    current_price: 0,
+    risk_category: "medium" as "low" | "medium" | "high" | "very_high",
+    metadata: {}
+  })
 
   // Load asset from URL parameter
   useEffect(() => {
@@ -371,6 +383,69 @@ export function AssetComposer() {
     }
   }
 
+  const createAsset = async () => {
+    try {
+      const { data: userData } = await supabase.auth.getUser()
+      if (!userData.user) throw new Error('Not authenticated')
+
+      // First, get or create a default portfolio
+      let { data: portfolios } = await supabase
+        .from('portfolios')
+        .select('id')
+        .eq('user_id', userData.user.id)
+        .limit(1)
+
+      let portfolioId = portfolios?.[0]?.id
+
+      if (!portfolioId) {
+        // Create a default portfolio if none exists
+        const { data: newPortfolio, error: portfolioError } = await supabase
+          .from('portfolios')
+          .insert([{
+            name: 'Default Portfolio',
+            description: 'Automatically created portfolio',
+            user_id: userData.user.id
+          }])
+          .select('id')
+          .single()
+
+        if (portfolioError) throw portfolioError
+        portfolioId = newPortfolio.id
+      }
+
+      const assetData = {
+        ...newAsset,
+        user_id: userData.user.id,
+        portfolio_id: portfolioId,
+        total_value: newAsset.quantity * newAsset.current_price,
+        source: 'manual' // Mark as composed asset
+      }
+
+      const { error } = await supabase
+        .from('assets')
+        .insert([assetData])
+
+      if (error) throw error
+
+      toast.success('Composed asset created successfully')
+      setCreateAssetDialogOpen(false)
+      setNewAsset({
+        name: "",
+        symbol: "",
+        asset_type: "stock",
+        quantity: 0,
+        purchase_price: 0,
+        current_price: 0,
+        risk_category: "medium",
+        metadata: {}
+      })
+      fetchAssets()
+    } catch (error) {
+      toast.error('Failed to create asset')
+      console.error(error)
+    }
+  }
+
   const composedAssets = assets.filter(a => !a.source || a.source === 'manual' || a.source === 'node_created')
 
   return (
@@ -379,6 +454,7 @@ export function AssetComposer() {
         assets={assets} 
         onAssetUpdate={fetchAssets}
         onLoadAsset={loadAssetIntoFlow}
+        onCreateAsset={() => setCreateAssetDialogOpen(true)}
       />
       
       <Card className="bg-card border-border h-[600px]">
@@ -594,8 +670,94 @@ export function AssetComposer() {
             variant={BackgroundVariant.Dots}
           />
         </ReactFlow>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Create Asset Dialog */}
+      <Dialog open={createAssetDialogOpen} onOpenChange={setCreateAssetDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Composed Asset</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={newAsset.name}
+                onChange={(e) => setNewAsset({ ...newAsset, name: e.target.value })}
+                placeholder="Asset name"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="symbol">Symbol</Label>
+              <Input
+                id="symbol"
+                value={newAsset.symbol}
+                onChange={(e) => setNewAsset({ ...newAsset, symbol: e.target.value })}
+                placeholder="AAPL, BTC, etc."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="asset-type">Asset Type</Label>
+              <Select value={newAsset.asset_type} onValueChange={(value: any) => setNewAsset({ ...newAsset, asset_type: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="stock">Stock</SelectItem>
+                  <SelectItem value="bond">Bond</SelectItem>
+                  <SelectItem value="crypto">Cryptocurrency</SelectItem>
+                  <SelectItem value="etf">ETF</SelectItem>
+                  <SelectItem value="commodity">Commodity</SelectItem>
+                  <SelectItem value="real_estate">Real Estate</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <Label htmlFor="quantity">Quantity</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  value={newAsset.quantity}
+                  onChange={(e) => setNewAsset({ ...newAsset, quantity: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="purchase-price">Purchase Price</Label>
+                <Input
+                  id="purchase-price"
+                  type="number"
+                  step="0.01"
+                  value={newAsset.purchase_price}
+                  onChange={(e) => setNewAsset({ ...newAsset, purchase_price: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="current-price">Current Price</Label>
+              <Input
+                id="current-price"
+                type="number"
+                step="0.01"
+                value={newAsset.current_price}
+                onChange={(e) => setNewAsset({ ...newAsset, current_price: parseFloat(e.target.value) || 0 })}
+              />
+            </div>
+
+            <Button onClick={createAsset} className="w-full">
+              Create Composed Asset
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
