@@ -24,6 +24,7 @@ import { Plus, Save, Download, Upload } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { useSearchParams } from "react-router-dom"
+import { ExistingAssetsList } from "./ExistingAssetsList"
 
 // Import custom nodes
 import EditableInitialAssetNode from './FlowNodes/EditableInitialAssetNode'
@@ -371,8 +372,15 @@ export function AssetComposer() {
   }
 
   return (
-    <Card className="bg-card border-border h-[600px]">
-      <CardHeader>
+    <div className="space-y-6">
+      <ExistingAssetsList 
+        assets={assets} 
+        onAssetUpdate={fetchAssets}
+        onLoadAsset={loadAssetIntoFlow}
+      />
+      
+      <Card className="bg-card border-border h-[600px]">
+        <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-foreground">Asset Composer</CardTitle>
@@ -586,5 +594,6 @@ export function AssetComposer() {
         </ReactFlow>
       </CardContent>
     </Card>
+    </div>
   )
 }
