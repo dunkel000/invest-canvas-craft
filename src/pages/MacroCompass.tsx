@@ -4,104 +4,126 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, ComposedChart } from "recharts";
+import { AdvancedChart } from "@/components/MacroCompass/AdvancedChart";
+import { MarketHeatmap } from "@/components/MacroCompass/MarketHeatmap";
+import { EconomicIndicator } from "@/components/MacroCompass/EconomicIndicator";
+import { RealTimeNewsFeed } from "@/components/MacroCompass/RealTimeNewsFeed";
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Treemap, Cell } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { TrendingUp, TrendingDown, DollarSign, Globe, AlertTriangle, Activity, BarChart3, PieChart as PieChartIcon, Calendar, Settings, RefreshCw, Download, Filter } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Globe, AlertTriangle, Activity, BarChart3, PieChart as PieChartIcon, Calendar, Settings, RefreshCw, Download, Filter, Zap, Target, Brain, Satellite } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
-// Enhanced mock data for economic indicators
-const economicData = [
-  { date: "2024-01", gdp: 4.2, inflation: 2.1, unemployment: 3.8, interest: 5.25, consumer_confidence: 112.3, manufacturing_pmi: 52.4 },
-  { date: "2024-02", gdp: 4.1, inflation: 2.3, unemployment: 3.7, interest: 5.50, consumer_confidence: 108.7, manufacturing_pmi: 51.8 },
-  { date: "2024-03", gdp: 4.3, inflation: 2.2, unemployment: 3.6, interest: 5.25, consumer_confidence: 115.2, manufacturing_pmi: 53.1 },
-  { date: "2024-04", gdp: 4.0, inflation: 2.4, unemployment: 3.8, interest: 5.00, consumer_confidence: 110.5, manufacturing_pmi: 52.7 },
-  { date: "2024-05", gdp: 4.2, inflation: 2.0, unemployment: 3.5, interest: 4.75, consumer_confidence: 118.9, manufacturing_pmi: 54.2 },
-  { date: "2024-06", gdp: 4.4, inflation: 1.9, unemployment: 3.4, interest: 4.50, consumer_confidence: 121.1, manufacturing_pmi: 55.3 },
+// Enhanced sophisticated mock data
+const economicIndicators = [
+  {
+    title: "GDP Growth Rate",
+    value: 4.4,
+    change: 0.2,
+    target: 3.5,
+    unit: "%",
+    description: "Quarterly GDP growth shows robust economic expansion driven by consumer spending and business investment.",
+    significance: "critical" as const,
+    trend: "bullish" as const,
+    forecast: { next: 4.1, timeframe: "Next Quarter", confidence: 78 },
+    historical: { high: 6.2, low: -2.1, average: 2.8 }
+  },
+  {
+    title: "Core Inflation",
+    value: 1.9,
+    change: -0.1,
+    target: 2.0,
+    unit: "%",
+    description: "Core inflation remains near Fed target, supporting potential monetary policy flexibility.",
+    significance: "critical" as const,
+    trend: "neutral" as const,
+    forecast: { next: 2.1, timeframe: "Next Month", confidence: 82 },
+    historical: { high: 4.8, low: 0.1, average: 2.2 }
+  },
+  {
+    title: "Unemployment Rate",
+    value: 3.4,
+    change: -0.1,
+    target: 4.0,
+    unit: "%",
+    description: "Unemployment at multi-decade lows indicates tight labor market conditions.",
+    significance: "high" as const,
+    trend: "bullish" as const,
+    forecast: { next: 3.5, timeframe: "Next Month", confidence: 75 },
+    historical: { high: 14.8, low: 3.4, average: 6.2 }
+  }
 ];
 
-const marketData = [
-  { date: "Jan", spx: 4200, nasdaq: 13000, bonds: 4.2, commodities: 85, vix: 18.5, dollar_index: 103.2 },
-  { date: "Feb", spx: 4350, nasdaq: 13500, bonds: 4.1, commodities: 88, vix: 16.2, dollar_index: 104.1 },
-  { date: "Mar", spx: 4180, nasdaq: 12800, bonds: 4.3, commodities: 82, vix: 22.1, dollar_index: 102.8 },
-  { date: "Apr", spx: 4480, nasdaq: 14200, bonds: 4.0, commodities: 90, vix: 15.8, dollar_index: 105.3 },
-  { date: "May", spx: 4520, nasdaq: 14800, bonds: 3.9, commodities: 93, vix: 14.2, dollar_index: 106.7 },
-  { date: "Jun", spx: 4650, nasdaq: 15200, bonds: 3.8, commodities: 95, vix: 13.8, dollar_index: 107.2 },
+const advancedMarketData = [
+  { date: "2024-01", spx: 4200, nasdaq: 13000, vix: 18.5, yields: 4.2, dxy: 103.2, sentiment: 0.72 },
+  { date: "2024-02", spx: 4350, nasdaq: 13500, vix: 16.2, yields: 4.1, dxy: 104.1, sentiment: 0.78 },
+  { date: "2024-03", spx: 4180, nasdaq: 12800, vix: 22.1, yields: 4.3, dxy: 102.8, sentiment: 0.45 },
+  { date: "2024-04", spx: 4480, nasdaq: 14200, vix: 15.8, yields: 4.0, dxy: 105.3, sentiment: 0.85 },
+  { date: "2024-05", spx: 4520, nasdaq: 14800, vix: 14.2, yields: 3.9, dxy: 106.7, sentiment: 0.89 },
+  { date: "2024-06", spx: 4650, nasdaq: 15200, vix: 13.8, yields: 3.8, dxy: 107.2, sentiment: 0.92 },
+  { date: "2024-07", spx: 4720, nasdaq: 15800, vix: 12.5, yields: 3.7, dxy: 108.1, sentiment: 0.95 },
+  { date: "2024-08", spx: 4580, nasdaq: 15100, vix: 19.3, yields: 4.1, dxy: 106.8, sentiment: 0.62 },
+  { date: "2024-09", spx: 4820, nasdaq: 16200, vix: 11.2, yields: 3.6, dxy: 109.5, sentiment: 0.98 },
 ];
 
-const sectorPerformance = [
-  { sector: "Technology", ytd: 18.5, week: 2.3, momentum: "strong" },
-  { sector: "Healthcare", ytd: 12.7, week: 1.1, momentum: "moderate" },
-  { sector: "Financials", ytd: 15.2, week: -0.8, momentum: "weak" },
-  { sector: "Energy", ytd: 8.9, week: 3.7, momentum: "strong" },
-  { sector: "Consumer Disc.", ytd: 22.1, week: 1.9, momentum: "strong" },
-  { sector: "Industrials", ytd: 14.3, week: 0.5, momentum: "moderate" },
+const heatmapData = [
+  { name: "AAPL", value: 175.43, change: 2.34, volume: 45123000, category: "Technology" },
+  { name: "MSFT", value: 338.11, change: 1.87, volume: 28934000, category: "Technology" },
+  { name: "GOOGL", value: 125.73, change: -0.95, volume: 31245000, category: "Technology" },
+  { name: "TSLA", value: 248.48, change: 4.12, volume: 67891000, category: "Technology" },
+  { name: "JPM", value: 147.23, change: 0.67, volume: 12456000, category: "Financials" },
+  { name: "BAC", value: 34.56, change: -1.23, volume: 45678000, category: "Financials" },
+  { name: "GS", value: 334.78, change: 1.45, volume: 2345000, category: "Financials" },
+  { name: "XOM", value: 104.23, change: 3.45, volume: 18234000, category: "Energy" },
+  { name: "CVX", value: 145.67, change: 2.78, volume: 9876000, category: "Energy" },
 ];
 
-const globalMarkets = [
-  { market: "S&P 500", value: 4650, change: 1.24, region: "US" },
-  { market: "NASDAQ", value: 15200, change: 1.89, region: "US" },
-  { market: "FTSE 100", value: 7420, change: 0.76, region: "UK" },
-  { market: "DAX", value: 15890, change: 1.12, region: "DE" },
-  { market: "Nikkei 225", value: 32400, change: -0.43, region: "JP" },
-  { market: "Shanghai", value: 3240, change: 0.89, region: "CN" },
-];
-
-const economicCalendar = [
-  { date: "Dec 13", event: "CPI Report", importance: "high", impact: "USD", forecast: "2.1%" },
-  { date: "Dec 14", event: "Retail Sales", importance: "medium", impact: "USD", forecast: "0.3%" },
-  { date: "Dec 15", event: "Fed Meeting", importance: "high", impact: "USD", forecast: "4.50%" },
-  { date: "Dec 16", event: "ECB Decision", importance: "high", impact: "EUR", forecast: "4.00%" },
-  { date: "Dec 17", event: "GDP Flash", importance: "medium", impact: "EUR", forecast: "0.4%" },
-];
-
-const correlationMatrix = [
-  { asset1: "Stocks", asset2: "Bonds", correlation: -0.65 },
-  { asset1: "Dollar", asset2: "Gold", correlation: -0.78 },
-  { asset1: "Oil", asset2: "Inflation", correlation: 0.72 },
-  { asset1: "VIX", asset2: "SPX", correlation: -0.85 },
-  { asset1: "Tech", asset2: "Yields", correlation: -0.43 },
+const correlationData = [
+  { subject: "Stocks", A: 85, B: 76, C: 92, D: 68, E: 79, fullMark: 100 },
+  { subject: "Bonds", A: 45, B: 88, C: 34, D: 92, E: 67, fullMark: 100 },
+  { subject: "Commodities", A: 78, B: 45, C: 89, D: 34, E: 56, fullMark: 100 },
+  { subject: "Currency", A: 67, B: 89, C: 45, D: 78, E: 91, fullMark: 100 },
+  { subject: "REITs", A: 56, B: 67, C: 78, D: 89, E: 45, fullMark: 100 },
+  { subject: "Crypto", A: 91, B: 34, C: 67, D: 45, E: 89, fullMark: 100 },
 ];
 
 const MacroCompass = () => {
-  const [timeframe, setTimeframe] = useState("6M");
-  const [activeTab, setActiveTab] = useState("overview");
+  const [timeframe, setTimeframe] = useState("YTD");
   const [selectedDate, setSelectedDate] = useState<Date>();
+  const [activeView, setActiveView] = useState("grid");
 
   const chartConfig = {
-    gdp: { label: "GDP Growth", color: "hsl(var(--primary))" },
-    inflation: { label: "Inflation", color: "hsl(var(--secondary))" },
-    unemployment: { label: "Unemployment", color: "hsl(var(--accent))" },
-    interest: { label: "Interest Rate", color: "hsl(var(--warning))" },
-    consumer_confidence: { label: "Consumer Confidence", color: "hsl(var(--success))" },
-    manufacturing_pmi: { label: "Manufacturing PMI", color: "hsl(var(--info))" },
     spx: { label: "S&P 500", color: "hsl(var(--primary))" },
     nasdaq: { label: "NASDAQ", color: "hsl(var(--secondary))" },
-    bonds: { label: "10Y Bonds", color: "hsl(var(--accent))" },
-    commodities: { label: "Commodities", color: "hsl(var(--warning))" },
     vix: { label: "VIX", color: "hsl(var(--destructive))" },
-    dollar_index: { label: "Dollar Index", color: "hsl(var(--success))" },
+    yields: { label: "10Y Yields", color: "hsl(var(--warning))" },
+    dxy: { label: "Dollar Index", color: "hsl(var(--success))" },
+    sentiment: { label: "Market Sentiment", color: "hsl(var(--info))" },
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Enhanced Header */}
+        {/* Advanced Header with Real-time Status */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Macro Compass</h1>
-            <p className="text-muted-foreground mt-1">
-              Good morning, <span className="text-primary">Analyst</span>. You have <span className="text-primary">12 notifications</span>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Macro Compass
+            </h1>
+            <p className="text-muted-foreground mt-2 flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              Real-time quantitative macro analysis • Last update: {format(new Date(), "HH:mm:ss")}
             </p>
           </div>
+          
           <div className="flex items-center gap-2">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8">
+                <Button variant="outline" size="sm" className="h-9">
                   <Calendar className="h-4 w-4 mr-2" />
-                  {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
+                  {selectedDate ? format(selectedDate, "PPP") : "Date Range"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -115,576 +137,414 @@ const MacroCompass = () => {
               </PopoverContent>
             </Popover>
             
-            <Button variant="outline" size="sm" className="h-8">
+            <Button variant="outline" size="sm" className="h-9">
               <Filter className="h-4 w-4 mr-2" />
-              Filter
+              Advanced Filter
             </Button>
             
-            <Button variant="outline" size="sm" className="h-8">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
+            <Button variant="outline" size="sm" className="h-9">
+              <Settings className="h-4 w-4 mr-2" />
+              Configure
             </Button>
             
-            <Button variant="outline" size="sm" className="h-8">
+            <Button variant="outline" size="sm" className="h-9">
               <Download className="h-4 w-4 mr-2" />
-              Export
+              Export Report
             </Button>
 
-            {["Week", "Month", "Quarter", "Year", "Max"].map((period) => (
-              <Button
-                key={period}
-                variant={timeframe === period ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTimeframe(period)}
-                className="h-8"
-              >
-                {period}
-              </Button>
-            ))}
+            <div className="flex items-center gap-1 ml-2">
+              {["1D", "1W", "1M", "3M", "6M", "YTD", "1Y", "5Y"].map((period) => (
+                <Button
+                  key={period}
+                  variant={timeframe === period ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTimeframe(period)}
+                  className="h-9 min-w-12"
+                >
+                  {period}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Enhanced Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-          <Card>
+        {/* Advanced KPI Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <Card className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">GDP Growth</CardTitle>
-              <TrendingUp className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-medium">Market Regime</CardTitle>
+              <Brain className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">4.4%</div>
-              <div className="flex items-center text-xs text-primary">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                +2.3%
+              <div className="text-2xl font-bold text-foreground">Bull Market</div>
+              <div className="flex items-center text-xs text-primary mt-1">
+                <Target className="h-3 w-3 mr-1" />
+                98% confidence
               </div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-transparent"></div>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Inflation CPI</CardTitle>
+              <CardTitle className="text-sm font-medium">Fear & Greed</CardTitle>
               <Activity className="h-4 w-4 text-secondary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">1.9%</div>
-              <div className="flex items-center text-xs text-primary">
-                <TrendingDown className="h-3 w-3 mr-1" />
-                -0.1%
+              <div className="text-2xl font-bold text-foreground">Extreme Greed</div>
+              <div className="flex items-center text-xs text-primary mt-1">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                87/100 score
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-warning/10 via-transparent to-transparent"></div>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Unemployment</CardTitle>
-              <BarChart3 className="h-4 w-4 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">3.4%</div>
-              <div className="flex items-center text-xs text-primary">
-                <TrendingDown className="h-3 w-3 mr-1" />
-                -0.1%
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Fed Rate</CardTitle>
-              <DollarSign className="h-4 w-4 text-warning" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-foreground">4.50%</div>
-              <div className="flex items-center text-xs text-destructive">
-                <TrendingDown className="h-3 w-3 mr-1" />
-                -0.25%
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">VIX</CardTitle>
-              <AlertTriangle className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-sm font-medium">Volatility Index</CardTitle>
+              <Zap className="h-4 w-4 text-warning" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-foreground">13.8</div>
-              <div className="flex items-center text-xs text-primary">
+              <div className="flex items-center text-xs text-primary mt-1">
                 <TrendingDown className="h-3 w-3 mr-1" />
-                -2.4%
+                -15.2% today
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-success/10 via-transparent to-transparent"></div>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">DXY</CardTitle>
-              <Globe className="h-4 w-4 text-success" />
+              <CardTitle className="text-sm font-medium">Risk Parity</CardTitle>
+              <BarChart3 className="h-4 w-4 text-success" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">107.2</div>
-              <div className="flex items-center text-xs text-primary">
+              <div className="text-2xl font-bold text-foreground">Balanced</div>
+              <div className="flex items-center text-xs text-primary mt-1">
+                <Globe className="h-3 w-3 mr-1" />
+                Optimal allocation
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 via-transparent to-transparent"></div>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Macro Score</CardTitle>
+              <Satellite className="h-4 w-4 text-destructive" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">8.7/10</div>
+              <div className="flex items-center text-xs text-primary mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                +0.5%
+                Strong momentum
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Enhanced Tab Navigation */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-8 lg:grid-cols-8">
+        {/* Main Analytics Dashboard */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-7 lg:grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="markets">Markets</TabsTrigger>
+            <TabsTrigger value="markets">Live Markets</TabsTrigger>
             <TabsTrigger value="economics">Economics</TabsTrigger>
-            <TabsTrigger value="sectors">Sectors</TabsTrigger>
-            <TabsTrigger value="global">Global</TabsTrigger>
             <TabsTrigger value="correlations">Correlations</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar</TabsTrigger>
-            <TabsTrigger value="alerts">Alerts</TabsTrigger>
+            <TabsTrigger value="sentiment">Sentiment</TabsTrigger>
+            <TabsTrigger value="risk">Risk Analytics</TabsTrigger>
+            <TabsTrigger value="news">News & Events</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="lg:col-span-2">
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <div className="lg:col-span-3">
+                <AdvancedChart
+                  data={advancedMarketData}
+                  title="Multi-Asset Performance Dashboard"
+                  description="Real-time tracking of major market indices with sentiment overlay"
+                  primaryMetric="spx"
+                  secondaryMetric="sentiment"
+                  chartType="composed"
+                  showBrush={true}
+                  annotations={[
+                    { x: "2024-08", label: "Market Correction", color: "hsl(var(--destructive))" },
+                    { x: "2024-09", label: "Recovery Rally", color: "hsl(var(--primary))" }
+                  ]}
+                  height={400}
+                />
+              </div>
+              
+              <RealTimeNewsFeed />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="markets" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <MarketHeatmap
+                data={heatmapData}
+                title="Real-Time Market Heatmap"
+                description="Live price movements across major asset classes"
+              />
+              
+              <Card>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="h-5 w-5" />
-                      Market Overview
-                    </CardTitle>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">Week</Button>
-                      <Button variant="outline" size="sm">Month</Button>
-                      <Button variant="default" size="sm">Max</Button>
-                    </div>
-                  </div>
-                  <CardDescription>Key Keywords: S&P 500 rally, Economic growth acceleration</CardDescription>
+                  <CardTitle>Cross-Asset Performance</CardTitle>
+                  <CardDescription>Normalized returns across asset classes</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[300px]">
+                  <ChartContainer config={chartConfig} className="h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart data={marketData}>
+                      <LineChart data={advancedMarketData}>
                         <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                         <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" />
                         <YAxis stroke="hsl(var(--muted-foreground))" />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                        <Area type="monotone" dataKey="spx" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.1} />
-                        <Line type="monotone" dataKey="spx" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }} />
-                      </ComposedChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div>
-                      <p className="text-2xl font-bold text-foreground">4,650 <span className="text-lg text-primary">+334</span></p>
-                      <p className="text-sm text-muted-foreground">Total S&P 500 Points</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-semibold text-primary">+7.8%</p>
-                      <p className="text-sm text-muted-foreground">YTD Performance</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Economic Spotlight</CardTitle>
-                  <CardDescription>Latest economic indicators</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="p-3 rounded-lg bg-primary/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">Consumer Confidence</span>
-                      <Badge variant="default">121.1</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Highest level since 2020, indicating strong consumer sentiment</p>
-                  </div>
-                  
-                  <div className="p-3 rounded-lg bg-secondary/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">Manufacturing PMI</span>
-                      <Badge variant="secondary">55.3</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Above 50 indicates expansion in manufacturing sector</p>
-                  </div>
-                  
-                  <div className="p-3 rounded-lg bg-accent/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">Trade Balance</span>
-                      <Badge variant="outline">-$68.2B</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Improving from previous month's -$71.1B deficit</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="markets" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Global Markets</CardTitle>
-                  <CardDescription>Major indices performance</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {globalMarkets.map((market, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="outline" className="text-xs">{market.region}</Badge>
-                          <span className="font-medium">{market.market}</span>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold">{market.value.toLocaleString()}</div>
-                          <div className={`text-sm flex items-center ${market.change >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                            {market.change >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                            {market.change > 0 ? '+' : ''}{market.change.toFixed(2)}%
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sector Performance</CardTitle>
-                  <CardDescription>YTD and weekly performance by sector</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {sectorPerformance.map((sector, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
-                        <div className="flex items-center gap-3">
-                          <span className="font-medium">{sector.sector}</span>
-                          <Badge variant={sector.momentum === 'strong' ? 'default' : sector.momentum === 'moderate' ? 'secondary' : 'outline'}>
-                            {sector.momentum}
-                          </Badge>
-                        </div>
-                        <div className="text-right space-y-1">
-                          <div className="text-sm font-semibold text-primary">YTD: +{sector.ytd}%</div>
-                          <div className={`text-xs ${sector.week >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                            Week: {sector.week > 0 ? '+' : ''}{sector.week}%
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="economics" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Economic Indicators Trends
-                  </CardTitle>
-                  <CardDescription>Key economic metrics over time</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={economicData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                        <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" />
-                        <YAxis stroke="hsl(var(--muted-foreground))" />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Line type="monotone" dataKey="gdp" stroke="hsl(var(--primary))" strokeWidth={2} />
-                        <Line type="monotone" dataKey="inflation" stroke="hsl(var(--secondary))" strokeWidth={2} />
-                        <Line type="monotone" dataKey="unemployment" stroke="hsl(var(--accent))" strokeWidth={2} />
+                        <Line type="monotone" dataKey="spx" stroke="hsl(var(--primary))" strokeWidth={2} />
+                        <Line type="monotone" dataKey="yields" stroke="hsl(var(--warning))" strokeWidth={2} strokeDasharray="5 5" />
+                        <Line type="monotone" dataKey="dxy" stroke="hsl(var(--success))" strokeWidth={2} strokeDasharray="3 3" />
                       </LineChart>
                     </ResponsiveContainer>
                   </ChartContainer>
                 </CardContent>
               </Card>
+            </div>
+          </TabsContent>
 
+          <TabsContent value="economics" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {economicIndicators.map((indicator, index) => (
+                <EconomicIndicator key={index} {...indicator} />
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="correlations" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Leading Indicators</CardTitle>
-                  <CardDescription>Forward-looking economic signals</CardDescription>
+                  <CardTitle>Asset Correlation Radar</CardTitle>
+                  <CardDescription>Multi-dimensional correlation analysis</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={chartConfig} className="h-[300px]">
+                  <ChartContainer config={chartConfig} className="h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={economicData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                        <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" />
-                        <YAxis stroke="hsl(var(--muted-foreground))" />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Area type="monotone" dataKey="consumer_confidence" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
-                        <Area type="monotone" dataKey="manufacturing_pmi" stroke="hsl(var(--secondary))" fill="hsl(var(--secondary))" fillOpacity={0.3} />
-                      </AreaChart>
+                      <RadarChart data={correlationData}>
+                        <PolarGrid stroke="hsl(var(--border))" />
+                        <PolarAngleAxis dataKey="subject" stroke="hsl(var(--muted-foreground))" />
+                        <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="hsl(var(--muted-foreground))" />
+                        <Radar name="Current" dataKey="A" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.1} strokeWidth={2} />
+                        <Radar name="Previous" dataKey="B" stroke="hsl(var(--secondary))" fill="hsl(var(--secondary))" fillOpacity={0.1} strokeWidth={2} strokeDasharray="5 5" />
+                      </RadarChart>
                     </ResponsiveContainer>
                   </ChartContainer>
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
 
-          <TabsContent value="sectors" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Sector Rotation Analysis</CardTitle>
-                <CardDescription>Capital flows and momentum across sectors</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer config={chartConfig} className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={sectorPerformance} layout="horizontal">
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                      <XAxis type="number" stroke="hsl(var(--muted-foreground))" />
-                      <YAxis dataKey="sector" type="category" stroke="hsl(var(--muted-foreground))" width={100} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="ytd" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="global" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Card className="lg:col-span-2">
+              <Card>
                 <CardHeader>
-                  <CardTitle>Global Market Heatmap</CardTitle>
-                  <CardDescription>Real-time performance across major markets</CardDescription>
+                  <CardTitle>Dynamic Correlation Matrix</CardTitle>
+                  <CardDescription>Rolling correlation heatmap</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-3 gap-4">
-                    {globalMarkets.map((market, index) => (
-                      <div 
-                        key={index} 
-                        className={`p-4 rounded-lg text-center transition-all hover:scale-105 ${
-                          market.change >= 2 ? 'bg-primary/20 border border-primary/30' :
-                          market.change >= 0 ? 'bg-success/20 border border-success/30' :
-                          market.change >= -2 ? 'bg-warning/20 border border-warning/30' :
-                          'bg-destructive/20 border border-destructive/30'
-                        }`}
-                      >
-                        <div className="text-sm font-medium mb-1">{market.market}</div>
-                        <div className="text-lg font-bold">{market.value.toLocaleString()}</div>
-                        <div className={`text-sm ${market.change >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                          {market.change > 0 ? '+' : ''}{market.change.toFixed(2)}%
-                        </div>
+                  <div className="grid grid-cols-6 gap-1 text-xs">
+                    {['', 'SPX', 'NDX', 'VIX', 'DXY', 'GLD'].map((label, i) => (
+                      <div key={i} className={`p-2 text-center font-medium ${i === 0 ? '' : 'bg-muted/20'}`}>
+                        {label}
                       </div>
                     ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Currency Monitor</CardTitle>
-                  <CardDescription>Major currency pairs</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {[
-                    { pair: "EUR/USD", rate: "1.0892", change: -0.23 },
-                    { pair: "GBP/USD", rate: "1.2654", change: 0.18 },
-                    { pair: "USD/JPY", rate: "148.75", change: 0.34 },
-                    { pair: "USD/CHF", rate: "0.8923", change: -0.12 },
-                  ].map((currency, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 rounded bg-muted/20">
-                      <span className="font-medium">{currency.pair}</span>
-                      <div className="text-right">
-                        <div className="font-semibold">{currency.rate}</div>
-                        <div className={`text-xs ${currency.change >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                          {currency.change > 0 ? '+' : ''}{currency.change.toFixed(2)}%
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="correlations" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <PieChartIcon className="h-5 w-5" />
-                    Asset Correlation Matrix
-                  </CardTitle>
-                  <CardDescription>Cross-asset correlation analysis with significance levels</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {correlationMatrix.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
-                        <span className="text-sm font-medium">{item.asset1} vs {item.asset2}</span>
-                        <div className="flex items-center gap-3">
-                          <Badge variant={Math.abs(item.correlation) > 0.7 ? "default" : Math.abs(item.correlation) > 0.4 ? "secondary" : "outline"}>
-                            {item.correlation > 0 ? "+" : ""}{item.correlation.toFixed(2)}
-                          </Badge>
-                          <div 
-                            className="w-16 h-2 rounded-full"
-                            style={{ 
-                              backgroundColor: item.correlation > 0 ? "hsl(var(--primary))" : "hsl(var(--destructive))",
-                              opacity: Math.abs(item.correlation)
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Risk-Return Profile</CardTitle>
-                  <CardDescription>Asset positioning analysis</CardDescription>
-                </CardHeader>
-                <CardContent className="flex items-center justify-center h-[300px]">
-                  <div className="text-center">
-                    <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-sm text-muted-foreground">Advanced risk-return scatter plot</p>
-                    <p className="text-xs text-muted-foreground">Interactive visualization coming soon...</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="calendar" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Economic Calendar
-                </CardTitle>
-                <CardDescription>Upcoming economic events and data releases</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {economicCalendar.map((event, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/20 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="text-center">
-                          <div className="text-sm font-semibold">{event.date}</div>
-                        </div>
-                        <div>
-                          <div className="font-medium">{event.event}</div>
-                          <div className="text-sm text-muted-foreground">Expected: {event.forecast}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={event.importance === 'high' ? 'destructive' : event.importance === 'medium' ? 'secondary' : 'outline'}>
-                          {event.importance}
-                        </Badge>
-                        <Badge variant="outline">{event.impact}</Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="alerts" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5" />
-                    Active Risk Alerts
-                  </CardTitle>
-                  <CardDescription>Real-time monitoring and notifications</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
-                      <AlertTriangle className="h-5 w-5 text-destructive" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">High Volatility Alert</p>
-                        <p className="text-xs text-muted-foreground">VIX spike detected: +15% intraday</p>
-                        <p className="text-xs text-muted-foreground">2 minutes ago</p>
-                      </div>
-                      <Badge variant="destructive">Critical</Badge>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-warning/10 border border-warning/20">
-                      <Activity className="h-5 w-5 text-warning" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Economic Data Release</p>
-                        <p className="text-xs text-muted-foreground">CPI data scheduled for release in 2 hours</p>
-                        <p className="text-xs text-muted-foreground">Expected impact: High</p>
-                      </div>
-                      <Badge variant="secondary">Medium</Badge>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20">
-                      <TrendingUp className="h-5 w-5 text-primary" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Market Momentum</p>
-                        <p className="text-xs text-muted-foreground">Technology sector showing strong upward momentum</p>
-                        <p className="text-xs text-muted-foreground">15 minutes ago</p>
-                      </div>
-                      <Badge variant="default">Info</Badge>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-secondary/10 border border-secondary/20">
-                      <Globe className="h-5 w-5 text-secondary" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">Central Bank Watch</p>
-                        <p className="text-xs text-muted-foreground">Fed officials speaking today - market sensitive</p>
-                        <p className="text-xs text-muted-foreground">1 hour ago</p>
-                      </div>
-                      <Badge variant="outline">Watch</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Volatility Monitor</CardTitle>
-                  <CardDescription>Current volatility across major assets</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
                     {[
-                      { asset: "VIX", current: 13.8, change: -2.4, level: "low" },
-                      { asset: "10Y Treasury", current: 12.4, change: 1.2, level: "medium" },
-                      { asset: "EUR/USD", current: 8.7, change: -0.3, level: "low" },
-                      { asset: "Oil (WTI)", current: 24.8, change: 3.1, level: "high" },
-                      { asset: "Gold", current: 15.2, change: 0.8, level: "medium" },
-                      { asset: "Bitcoin", current: 67.3, change: -4.2, level: "very high" },
-                    ].map((item, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
-                        <div className="flex items-center gap-3">
-                          <span className="font-medium">{item.asset}</span>
-                          {item.change >= 0 ? (
-                            <TrendingUp className="h-4 w-4 text-destructive" />
-                          ) : (
-                            <TrendingDown className="h-4 w-4 text-primary" />
-                          )}
+                      ['SPX', 1.00, 0.85, -0.73, -0.45, 0.12],
+                      ['NDX', 0.85, 1.00, -0.68, -0.52, 0.08],
+                      ['VIX', -0.73, -0.68, 1.00, 0.23, -0.15],
+                      ['DXY', -0.45, -0.52, 0.23, 1.00, -0.67],
+                      ['GLD', 0.12, 0.08, -0.15, -0.67, 1.00]
+                    ].map((row, i) => 
+                      row.map((cell, j) => (
+                        <div 
+                          key={`${i}-${j}`} 
+                          className={`p-2 text-center text-xs ${
+                            j === 0 ? 'font-medium bg-muted/20' : 
+                            Math.abs(cell as number) > 0.7 ? 'bg-primary/20 text-primary' :
+                            Math.abs(cell as number) > 0.4 ? 'bg-secondary/20 text-secondary' :
+                            'bg-muted/10'
+                          }`}
+                        >
+                          {j === 0 ? cell : (cell as number).toFixed(2)}
                         </div>
-                        <div className="text-right space-y-1">
-                          <Badge variant={
-                            item.level === "very high" ? "destructive" :
-                            item.level === "high" ? "secondary" :
-                            item.level === "medium" ? "outline" : "default"
-                          }>
-                            {item.current}%
-                          </Badge>
-                          <div className={`text-xs ${item.change >= 0 ? 'text-destructive' : 'text-primary'}`}>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="sentiment" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Market Sentiment Analysis</CardTitle>
+                  <CardDescription>AI-powered sentiment tracking across multiple data sources</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AdvancedChart
+                    data={advancedMarketData}
+                    title=""
+                    primaryMetric="sentiment"
+                    chartType="area"
+                    height={300}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Sentiment Breakdown</CardTitle>
+                  <CardDescription>Real-time sentiment across channels</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {[
+                    { source: "Social Media", score: 78, change: 5.2 },
+                    { source: "News Articles", score: 65, change: -2.1 },
+                    { source: "Analyst Reports", score: 82, change: 3.7 },
+                    { source: "Options Flow", score: 71, change: 1.8 },
+                    { source: "Insider Trading", score: 89, change: 7.3 }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/20">
+                      <span className="font-medium">{item.source}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <div className="font-semibold">{item.score}/100</div>
+                          <div className={`text-xs ${item.change >= 0 ? 'text-primary' : 'text-destructive'}`}>
                             {item.change > 0 ? '+' : ''}{item.change.toFixed(1)}%
                           </div>
                         </div>
+                        <div className="w-16 h-2 bg-muted rounded-full">
+                          <div 
+                            className="h-full bg-primary rounded-full transition-all" 
+                            style={{ width: `${item.score}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="risk" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>VaR Analysis</CardTitle>
+                  <CardDescription>Value at Risk metrics</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {[
+                    { period: "1-Day", var95: "-2.1%", var99: "-3.4%" },
+                    { period: "1-Week", var95: "-4.8%", var99: "-7.2%" },
+                    { period: "1-Month", var95: "-8.9%", var99: "-13.1%" }
+                  ].map((item, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium">{item.period}</span>
+                        <Badge variant="outline">95% / 99%</Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-destructive font-mono">{item.var95}</span>
+                        <span className="text-destructive font-mono font-bold">{item.var99}</span>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Stress Test Results</CardTitle>
+                  <CardDescription>Portfolio performance under extreme scenarios</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { scenario: "2008 Financial Crisis", impact: "-42.3%" },
+                    { scenario: "COVID-19 Crash", impact: "-28.1%" },
+                    { scenario: "1987 Black Monday", impact: "-35.7%" },
+                    { scenario: "Rate Shock +200bp", impact: "-15.2%" }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 rounded bg-muted/10">
+                      <span className="text-sm">{item.scenario}</span>
+                      <Badge variant="destructive">{item.impact}</Badge>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Risk Attribution</CardTitle>
+                  <CardDescription>Sources of portfolio risk</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { factor: "Market Beta", contribution: 45 },
+                      { factor: "Sector Exposure", contribution: 28 },
+                      { factor: "Interest Rate", contribution: 15 },
+                      { factor: "Currency", contribution: 8 },
+                      { factor: "Idiosyncratic", contribution: 4 }
+                    ].map((item, index) => (
+                      <div key={index} className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span>{item.factor}</span>
+                          <span>{item.contribution}%</span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div 
+                            className="bg-primary h-2 rounded-full transition-all" 
+                            style={{ width: `${item.contribution}%` }}
+                          ></div>
+                        </div>
                       </div>
                     ))}
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="news" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <RealTimeNewsFeed />
+              </div>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Economic Calendar</CardTitle>
+                  <CardDescription>Key events this week</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { date: "Today", event: "FOMC Meeting", impact: "High" },
+                    { date: "Tomorrow", event: "CPI Release", impact: "High" },
+                    { date: "Wednesday", event: "ECB Decision", impact: "Medium" },
+                    { date: "Thursday", event: "Jobless Claims", impact: "Medium" },
+                    { date: "Friday", event: "GDP Revision", impact: "Low" }
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 rounded-lg border">
+                      <div>
+                        <div className="font-medium">{item.event}</div>
+                        <div className="text-xs text-muted-foreground">{item.date}</div>
+                      </div>
+                      <Badge variant={item.impact === "High" ? "destructive" : item.impact === "Medium" ? "secondary" : "outline"}>
+                        {item.impact}
+                      </Badge>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             </div>
