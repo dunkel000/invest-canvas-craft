@@ -96,6 +96,35 @@ All colors MUST be HSL.
   100% { transform: translateX(-100%); }
 }
 
+/* Particle Movement Animations */
+@keyframes float-x {
+  0%, 100% { transform: translateX(0px); }
+  50% { transform: translateX(20px); }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes float-diagonal {
+  0%, 100% { transform: translate(0px, 0px); }
+  33% { transform: translate(15px, -10px); }
+  66% { transform: translate(-10px, 15px); }
+}
+
 .animate-marquee {
   animation: marquee 30s linear infinite;
+}
+
+.animate-float-x {
+  animation: float-x 8s ease-in-out infinite;
+}
+
+.animate-float-y {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+.animate-float-diagonal {
+  animation: float-diagonal 10s ease-in-out infinite;
 }
