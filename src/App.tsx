@@ -32,6 +32,7 @@ import UserManagement from "./pages/admin/UserManagement";
 import Analytics from "./pages/admin/Analytics";
 import SystemSettings from "./pages/admin/SystemSettings";
 import AuditLogs from "./pages/admin/AuditLogs";
+import MacroCompass from "./pages/MacroCompass";
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="/assets" element={<Assets />} />
               <Route path="/asset-composer" element={<AssetComposer />} />
               <Route path="/api-connections" element={<ApiConnections />} />
+              <Route path="/macro-compass" element={<MacroCompass />} />
               <Route path="/analytics" element={<div>Analytics coming soon</div>} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/auth" element={<Auth />} />
