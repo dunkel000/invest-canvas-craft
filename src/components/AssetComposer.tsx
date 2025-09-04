@@ -371,6 +371,8 @@ export function AssetComposer() {
     }
   }
 
+  const composedAssets = assets.filter(a => !a.source || a.source === 'manual' || a.source === 'node_created')
+
   return (
     <div className="space-y-6">
       <ExistingAssetsList 
@@ -401,7 +403,7 @@ export function AssetComposer() {
                   <DialogTitle>Select Asset to Compose</DialogTitle>
                 </DialogHeader>
                 <div className="max-h-96 overflow-y-auto space-y-2">
-                  {assets.length > 0 ? assets.map((asset) => (
+                  {composedAssets.length > 0 ? composedAssets.map((asset) => (
                     <div
                       key={asset.id}
                       className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
@@ -433,7 +435,7 @@ export function AssetComposer() {
                     </div>
                   )) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      <p>No assets found.</p>
+                      <p>No composed assets found.</p>
                       <p className="text-sm mt-2">Create an asset first or use the sample composition below.</p>
                     </div>
                   )}
@@ -476,7 +478,7 @@ export function AssetComposer() {
                           <SelectValue placeholder="Choose an asset" />
                         </SelectTrigger>
                         <SelectContent>
-                          {assets.map((asset) => (
+                          {composedAssets.map((asset) => (
                             <SelectItem key={asset.id} value={asset.id}>
                               {asset.name} ({asset.symbol})
                             </SelectItem>

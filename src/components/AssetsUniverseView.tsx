@@ -281,19 +281,12 @@ export function AssetsUniverseView({ assets, onAssetUpdate }: AssetsUniverseView
           </p>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="composed" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="composed" className="flex items-center gap-2">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
                 <Layers className="w-4 h-4" />
-                Composed ({composedAssets.length})
-              </TabsTrigger>
-              <TabsTrigger value="imported" className="flex items-center gap-2">
-                <Database className="w-4 h-4" />
-                Imported ({apiAssets.length})
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="composed" className="mt-4">
+                <span className="font-medium">Composed ({composedAssets.length})</span>
+              </div>
               <div className="max-h-96 overflow-y-auto space-y-2">
                 {composedAssets.length > 0 ? (
                   composedAssets.map(renderAssetRow)
@@ -304,9 +297,12 @@ export function AssetsUniverseView({ assets, onAssetUpdate }: AssetsUniverseView
                   </div>
                 )}
               </div>
-            </TabsContent>
-
-            <TabsContent value="imported" className="mt-4">
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <Database className="w-4 h-4" />
+                <span className="font-medium">Imported ({apiAssets.length})</span>
+              </div>
               <div className="max-h-96 overflow-y-auto space-y-2">
                 {apiAssets.length > 0 ? (
                   apiAssets.map(renderAssetRow)
@@ -317,8 +313,8 @@ export function AssetsUniverseView({ assets, onAssetUpdate }: AssetsUniverseView
                   </div>
                 )}
               </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
