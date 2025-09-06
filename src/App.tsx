@@ -25,6 +25,7 @@ import CustomPortfolio from "./pages/portfolios/CustomPortfolio";
 import ApiSyncedPortfolios from "./pages/portfolios/ApiSyncedPortfolios";
 import InvestmentTemplates from "./pages/portfolios/InvestmentTemplates";
 import ClientPortfolios from "./pages/portfolios/ClientPortfolios";
+import Analysis from "./pages/portfolios/Analysis";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -61,6 +62,7 @@ const App = () => (
 
               {/* Portfolio Routes */}
               <Route path="/portfolios/all" element={<AllPortfolios />} />
+              <Route path="/portfolios/analysis" element={<Analysis />} />
               <Route path="/portfolios/custom" element={<CustomPortfolio />} />
               <Route path="/portfolios/investment-templates" element={<InvestmentTemplates />} />
               <Route path="/portfolios/api-synced" element={<ApiSyncedPortfolios />} />
