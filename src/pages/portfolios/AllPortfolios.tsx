@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import { AnalysisWidgets } from "@/components/analysis/AnalysisWidgets"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ProtectedRoute from "@/components/ProtectedRoute"
-import { BarChart3, TrendingUp } from "lucide-react"
+import { BarChart3, TrendingUp, ExternalLink } from "lucide-react"
+import { Link } from "react-router-dom"
 
 const AllPortfolios = () => {
   return (
@@ -17,10 +18,18 @@ const AllPortfolios = () => {
               <h2 className="text-2xl font-bold text-foreground">All Portfolios</h2>
               <p className="text-muted-foreground">Unified view of all your investment portfolios and holdings</p>
             </div>
-            <Button variant="outline" size="sm">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Advanced Analysis
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link to="/portfolios/analysis">
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Full Analysis
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Advanced Analysis
+              </Button>
+            </div>
           </div>
           
           <Tabs defaultValue="overview" className="w-full">
